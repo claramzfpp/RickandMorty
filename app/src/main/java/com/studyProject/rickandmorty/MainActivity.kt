@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,6 +20,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RickAndMortyTheme {
+                // Só obter o ViewModel já roda o init -> dispara a request.
+                // viewModel() = equivalente a @StateObject no SwiftUI.
+                viewModel<CharacterViewModel>()
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
                         name = "Android",
