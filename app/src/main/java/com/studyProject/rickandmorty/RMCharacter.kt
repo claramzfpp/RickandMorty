@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable // Codable (Swift)
 data class GetAllCharacterResponse(
-    val info: GetAllCharacterResponseInfo, // val = let | var = var 
+    val info: GetAllCharacterResponseInfo, // val = let | var = var
     val results: List<RMCharacter> // [RMCharacter] (Swift)
 )
 
