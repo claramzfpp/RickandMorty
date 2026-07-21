@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+
+    // 1. Ative o plugin de serialização aqui
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -51,4 +54,7 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // 2. Chame o bundle para puxar as 5 dependências de rede juntas de forma limpa
+    implementation(libs.bundles.api.client)
 }
