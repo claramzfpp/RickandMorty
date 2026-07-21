@@ -20,9 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RickAndMortyTheme {
-                // Só obter o ViewModel já roda o init -> dispara a request.
-                // viewModel() = equivalente a @StateObject no SwiftUI.
-                viewModel<CharacterViewModel>()
+                viewModel<CharacterViewModel>() //cria a viewModel e dispara o init dela
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
