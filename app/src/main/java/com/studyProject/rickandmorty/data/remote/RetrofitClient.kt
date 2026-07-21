@@ -1,4 +1,4 @@
-package com.studyProject.rickandmorty
+package com.studyProject.rickandmorty.data.remote
 
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -31,6 +31,6 @@ object RetrofitClient {
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType())) //é um JSONDecoder
         .build()
 
-    //basicamente juntando nossa interface Service + "delegates" para o client conseguir fazer a chamada de API
-    val api: Service = retrofit.create(Service::class.java)
+    //basicamente juntando nossa interface RickAndMortyApi + "delegates" para o client conseguir fazer a chamada de API
+    val api: RickAndMortyApi = retrofit.create(RickAndMortyApi::class.java)
 }

@@ -1,4 +1,4 @@
-package com.studyProject.rickandmorty
+package com.studyProject.rickandmorty.data.remote.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

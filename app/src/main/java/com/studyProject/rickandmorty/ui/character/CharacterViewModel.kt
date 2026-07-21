@@ -1,8 +1,10 @@
-package com.studyProject.rickandmorty
+package com.studyProject.rickandmorty.ui.character
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studyProject.rickandmorty.data.remote.RetrofitClient
+import com.studyProject.rickandmorty.data.remote.dto.RMCharacter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +18,6 @@ enum class ViewState {
 
 class CharacterViewModel : ViewModel() { // ObservableObject (SwiftUI)
 
-    private val TAG = "APICallTag" // filtre por essa tag no Logcat para ver o que voltou || Log
     private var pageNumber: Int = 1
 
     // lista de personagens exposta do mesmo jeito (par privado/público)
@@ -72,5 +73,10 @@ class CharacterViewModel : ViewModel() { // ObservableObject (SwiftUI)
                 _state.value = ViewState.ERROR
             }
         }
+    }
+
+    // constante da classe (convenção Android p/ TAG de Log)
+    companion object {
+        private const val TAG = "APICallTag"
     }
 }
