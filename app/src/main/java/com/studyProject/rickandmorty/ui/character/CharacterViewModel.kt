@@ -4,32 +4,17 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studyProject.rickandmorty.data.remote.RetrofitClient
-import com.studyProject.rickandmorty.data.remote.dto.RMCharacter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-enum class ViewState {
-    LOADING,
-    LOADED,
-    ERROR
-}
-
 class CharacterViewModel : ViewModel() { // ObservableObject (SwiftUI)
-
     private var pageNumber: Int = 1
 
-    // lista de personagens exposta do mesmo jeito (par privado/público)
-    private val _characters = MutableStateFlow<List<RMCharacter>>(emptyList())
-    val characters: StateFlow<List<RMCharacter>> = _characters.asStateFlow()
-
-    // versão privada e mutável — só o ViewModel muda
-    private val _state = MutableStateFlow(ViewState.LOADING)
-    // versão pública e só-leitura — a tela só lê
-    val state: StateFlow<ViewState> = _state.asStateFlow()
-    //em Swift, criariamos um "@Published private(set) var state: ViewState"
-
+    private val _state = MutableStateFlow<CharacterUiState>(CharacterUiState.Loading)
+    val state: StateFlow<CharacterUiState> = _state.asStateFlow()
+    //em Swift, seria "@Published private(set) var state: CharacterUiState"
 
     init { // igual o init de swift
         fetchCharacters()
@@ -37,40 +22,41 @@ class CharacterViewModel : ViewModel() { // ObservableObject (SwiftUI)
 
     fun fetchCharacters() {
         viewModelScope.launch { // estilo Task (Swift)
-            _state.value = ViewState.LOADING
+            // guarda a lista atual ANTES de trocar pra Loading
+            // as? = o "as?" do Swift: só devolve se o estado for Loaded, senão null -> lista vazia
+            val current = (_state.value as? CharacterUiState.Loaded)?.characters ?: emptyList()
+            _state.value = CharacterUiState.Loading
 
             try { // try catch = do catch (Swift)
                 val response = RetrofitClient.api.fetchingCharacters(name = null, page = pageNumber)
 
                 Log.d(TAG, "OK! Total de personagens: ${response.info.count}")
 
-                // cria uma lista ""NOVA"" (antiga + novos) pra o StateFlow avisar a tela
-                _characters.value = _characters.value + response.results
-                _state.value = ViewState.LOADED
+                // novo estado Loaded já carregando a lista (antiga + nova página)
+                _state.value = CharacterUiState.Loaded(current + response.results)
 
             } catch (e: Exception) {
                 Log.e(TAG, "Falhou: ${e.message}", e)
-                _state.value = ViewState.ERROR
+                _state.value = CharacterUiState.Error(e.message ?: "Erro desconhecido")
             }
         }
     }
 
     fun fetchByName(name: String) {
         viewModelScope.launch {
-            _state.value = ViewState.LOADING
+            _state.value = CharacterUiState.Loading
 
             try {
                 val response = RetrofitClient.api.fetchingCharacters(name = name, page = pageNumber)
 
                 Log.d(TAG, "OK! Total de personagens: ${response.info.count}")
 
-                // substitui a lista inteira pela nova busca
-                _characters.value = response.results
-                _state.value = ViewState.LOADED
+                // substitui a lista inteira pela nova busca (não acumula)
+                _state.value = CharacterUiState.Loaded(response.results)
 
             } catch (e: Exception) {
                 Log.e(TAG, "Falhou: ${e.message}", e)
-                _state.value = ViewState.ERROR
+                _state.value = CharacterUiState.Error(e.message ?: "Erro desconhecido")
             }
         }
     }
