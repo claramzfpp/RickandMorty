@@ -35,6 +35,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true // gera a classe BuildConfig (p/ usar BuildConfig.DEBUG)
     }
 }
 
@@ -58,4 +59,8 @@ dependencies {
 
     // 2. Chame o bundle para puxar as 5 dependências de rede juntas de forma limpa
     implementation(libs.bundles.api.client)
+
+    // Koin (injeção de dependência)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 }
