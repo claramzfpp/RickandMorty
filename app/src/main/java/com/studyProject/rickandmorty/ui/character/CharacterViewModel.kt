@@ -7,37 +7,39 @@ import com.studyProject.rickandmorty.data.repository.CharacterRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class CharacterViewModel : ViewModel() { // ObservableObject (SwiftUI)
     private var pageNumber: Int = 1
 
-    private val repository = CharacterRepository()
+    // usa a instância COMPARTILHADA do repository (mesmo flow em qualquer lugar)
+    private val repository = CharacterRepository.shared
 
-    // um estado só — a lista mora dentro de Loaded
+    // estado da UI (loading/loaded/error)
     private val _state = MutableStateFlow<CharacterUiState>(CharacterUiState.Loading)
     val state: StateFlow<CharacterUiState> = _state.asStateFlow()
-    //em Swift, seria "@Published private(set) var state: CharacterUiState"
 
-    init { // igual o init de swift
+    init {
+        // OBSERVA o flow do repository: sempre que a lista muda lá, refletimos aqui.
+        // é o "cano" que fica escutando — parecido com um .sink do Combine.
+        viewModelScope.launch {
+            repository.characters.collect { characters ->
+                if (characters.isNotEmpty()) {
+                    Log.d(TAG, "Recebidos: ${characters.size}")
+                    _state.value = CharacterUiState.Loaded(characters)
+                }
+            }
+        }
         fetchCharacters()
     }
 
     fun fetchCharacters() {
-        viewModelScope.launch { // estilo Task (Swift)
-            // guarda a lista atual ANTES de trocar pra Loading
-            val current = (_state.value as? CharacterUiState.Loaded)?.characters ?: emptyList()
+        viewModelScope.launch {
             _state.value = CharacterUiState.Loading
-
-            try { // try catch = do catch (Swift)
-                // pede a lista pro repository (ele que fala com a rede)
-                val results = repository.getCharacters(page = pageNumber)
-
-                Log.d(TAG, "Recebidos: ${results.size}")
-
-                // novo estado Loaded já carregando a lista (antiga + nova página)
-                _state.value = CharacterUiState.Loaded(current + results)
-
+            try {
+                // só PEDE pro repo carregar; o flow dele atualiza e o collect acima reflete
+                repository.loadCharacters(pageNumber)
             } catch (e: Exception) {
                 Log.e(TAG, "Falhou: ${e.message}", e)
                 _state.value = CharacterUiState.Error(e.message ?: "Erro desconhecido")
@@ -48,15 +50,8 @@ class CharacterViewModel : ViewModel() { // ObservableObject (SwiftUI)
     fun fetchByName(name: String) {
         viewModelScope.launch {
             _state.value = CharacterUiState.Loading
-
             try {
-                val results = repository.getCharactersByName(name = name, page = pageNumber)
-
-                Log.d(TAG, "Recebidos: ${results.size}")
-
-                // substitui a lista inteira pela nova busca (não acumula)
-                _state.value = CharacterUiState.Loaded(results)
-
+                repository.searchByName(name = name, page = pageNumber)
             } catch (e: Exception) {
                 Log.e(TAG, "Falhou: ${e.message}", e)
                 _state.value = CharacterUiState.Error(e.message ?: "Erro desconhecido")
@@ -64,7 +59,6 @@ class CharacterViewModel : ViewModel() { // ObservableObject (SwiftUI)
         }
     }
 
-    // constante da classe (convenção Android p/ TAG de Log)
     companion object {
         private const val TAG = "APICallTag"
     }
