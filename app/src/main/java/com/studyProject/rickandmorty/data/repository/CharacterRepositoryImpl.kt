@@ -7,10 +7,12 @@ import com.studyProject.rickandmorty.domain.repository.CharacterRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 // Implementação concreta da interface, na camada data.
 // É esta que usa Retrofit. Poderia existir outra (mock, cache) sem a UI saber.
-class CharacterRepositoryImpl(
+// @Inject constructor = o Hilt sabe como criar isto (injetando a api).
+class CharacterRepositoryImpl @Inject constructor(
     private val api: RickAndMortyApi
 ) : CharacterRepository {
 

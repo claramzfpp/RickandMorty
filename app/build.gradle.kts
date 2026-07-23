@@ -4,6 +4,10 @@ plugins {
 
     // 1. Ative o plugin de serialização aqui
     alias(libs.plugins.kotlin.serialization)
+
+    // Hilt + KSP
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -60,7 +64,8 @@ dependencies {
     // 2. Chame o bundle para puxar as 5 dependências de rede juntas de forma limpa
     implementation(libs.bundles.api.client)
 
-    // Koin (injeção de dependência)
-    implementation(libs.koin.android)
-    implementation(libs.koin.androidx.compose)
+    // Hilt (injeção de dependência)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 }
