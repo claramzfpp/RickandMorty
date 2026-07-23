@@ -1,6 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+
+    // 1. Ative o plugin de serialização aqui
+    alias(libs.plugins.kotlin.serialization)
+
+    // Hilt + KSP
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -32,12 +39,14 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true // gera a classe BuildConfig (p/ usar BuildConfig.DEBUG)
     }
 }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
@@ -51,4 +60,12 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // 2. Chame o bundle para puxar as 5 dependências de rede juntas de forma limpa
+    implementation(libs.bundles.api.client)
+
+    // Hilt (injeção de dependência)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 }
