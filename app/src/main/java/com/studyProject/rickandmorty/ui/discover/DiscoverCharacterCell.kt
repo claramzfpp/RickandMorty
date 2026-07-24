@@ -8,21 +8,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.studyProject.rickandmorty.ui.theme.RMBrown
-import com.studyProject.rickandmorty.ui.theme.RMGray
-import com.studyProject.rickandmorty.ui.theme.RMGreen
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 @Composable
@@ -49,19 +46,19 @@ fun labelComponent(name: String, status: String) {
         modifier = Modifier
             .width(170.dp)
             .clip(roundedCornerShape)
-            .background(RMBrown)
+            .background(MaterialTheme.colorScheme.surfaceVariant)
             .padding(horizontal = 7.dp, vertical = 5.dp)
     ) {
         Text(
             text = "$name",
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
 
         Text(
             text = "Status: $status",
-            color = Color.White,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 16.sp,
         )
     }
@@ -73,7 +70,7 @@ fun imageComponent(image: String) {
         modifier = Modifier
             .size(170.dp, 180.dp)
             .clip(RoundedCornerShape(8.dp))
-            .border(3.dp, RMGreen, RoundedCornerShape(8.dp))
+            .border(3.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp))
     ) {
         AsyncImage(
             model = image,
@@ -82,7 +79,7 @@ fun imageComponent(image: String) {
             modifier = Modifier
                 .size(170.dp, 180.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .background(RMGray) // cinza aparece enquanto a imagem carrega
+                .background(MaterialTheme.colorScheme.background) // cor de fundo enquanto a imagem carrega
         )
     }
 }
