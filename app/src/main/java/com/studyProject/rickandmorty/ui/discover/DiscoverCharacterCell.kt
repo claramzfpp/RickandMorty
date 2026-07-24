@@ -1,4 +1,4 @@
-package com.studyProject.rickandmorty
+package com.studyProject.rickandmorty.ui.discover
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

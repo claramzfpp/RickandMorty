@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studyProject.rickandmorty.ui.character.CharacterViewModel
+import com.studyProject.rickandmorty.ui.discover.DiscoverScreen
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,7 +27,7 @@ class MainActivity : ComponentActivity() {
             RickAndMortyTheme {
                 hiltViewModel<CharacterViewModel>() //o Hilt cria a viewModel (injetando o repository) e dispara o init dela
 
-                DiscoverTabView()
+                DiscoverScreen()
             }
         }
     }
