@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -17,7 +18,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -39,14 +43,19 @@ fun DiscoverScreen(
 ) {
     // collectAsStateWithLifecycle = observa o StateFlow respeitando o ciclo de vida da tela
     val state by viewModel.state.collectAsStateWithLifecycle()
-    DiscoverContent(state = state, modifier = modifier)
+    DiscoverContent(
+        state = state,
+        onLoadMore = viewModel::loadMore,
+        modifier = modifier,
+    )
 }
 
-// "sem estado" (stateless): só recebe o state e desenha
+// "sem estado" (stateless): só recebe o state e o callback, e desenha
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DiscoverContent(
     state: CharacterUiState,
+    onLoadMore: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -74,7 +83,7 @@ private fun DiscoverContent(
         // switch (Swift)
         when (state) {
             CharacterUiState.Loading -> LoadingContent(contentModifier)
-            is CharacterUiState.Loaded -> CharacterGrid(state.characters, contentModifier)
+            is CharacterUiState.Loaded -> CharacterGrid(state.characters, onLoadMore, contentModifier)
             is CharacterUiState.Error -> ErrorContent(state.message, contentModifier)
         }
     }
@@ -93,9 +102,29 @@ private fun DiscoverTitle() {
 @Composable
 private fun CharacterGrid(
     characters: List<Character>,
+    onLoadMore: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // guarda a posição/rolagem da grid (precisamos dela pra saber onde o scroll está)
+    val gridState = rememberLazyGridState()
+
+    // vira true quando o usuário chega perto do fim da lista.
+    // derivedStateOf = recalcula só quando os valores lidos mudam (eficiente).
+    val reachedEnd by remember {
+        derivedStateOf {
+            val lastVisible = gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            val total = gridState.layoutInfo.totalItemsCount
+            total > 0 && lastVisible >= total - 4 // dentro dos últimos 4 itens
+        }
+    }
+
+    // dispara "carregar mais" quando reachedEnd passa a ser true
+    LaunchedEffect(reachedEnd) {
+        if (reachedEnd) onLoadMore()
+    }
+
     LazyVerticalGrid(
+        state = gridState,
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -128,6 +157,7 @@ private fun ErrorContent(message: String, modifier: Modifier = Modifier) {
 private fun DiscoverContentPreview() {
     RickAndMortyTheme {
         DiscoverContent(
+            onLoadMore = {},
             state = CharacterUiState.Loaded(
                 List(4) { index ->
                     Character(
