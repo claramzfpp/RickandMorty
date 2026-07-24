@@ -26,12 +26,7 @@ class MainActivity : ComponentActivity() {
             RickAndMortyTheme {
                 hiltViewModel<CharacterViewModel>() //o Hilt cria a viewModel (injetando o repository) e dispara o init dela
 
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                DiscoverTabView()
             }
         }
     }
