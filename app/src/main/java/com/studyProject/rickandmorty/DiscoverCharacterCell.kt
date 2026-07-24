@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,7 +42,8 @@ fun labelComponent(name: String, status: String) {
         topStart = 0.dp,
         topEnd = 0.dp,
         bottomEnd = 8.dp,
-        bottomStart = 8.dp)
+        bottomStart = 8.dp
+    )
 
     return Column(
         modifier = Modifier
@@ -66,19 +69,22 @@ fun labelComponent(name: String, status: String) {
 
 @Composable
 fun imageComponent(image: String) {
-        Box(
-        modifier = Modifier
-            .size(170.dp, 180.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(RMGray)
-    )
-
     Box(
         modifier = Modifier
             .size(170.dp, 180.dp)
             .clip(RoundedCornerShape(8.dp))
             .border(3.dp, RMGreen, RoundedCornerShape(8.dp))
-    )
+    ) {
+        AsyncImage(
+            model = image,
+            contentDescription = null,
+            contentScale = ContentScale.Crop, // = .scaledToFill() do SwiftUI
+            modifier = Modifier
+                .size(170.dp, 180.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(RMGray) // cinza aparece enquanto a imagem carrega
+        )
+    }
 }
 
 @Preview(showBackground = true)
@@ -88,7 +94,7 @@ fun DiscoverCharacterCellPreview() {
         DiscoverCharacterCell(
             "Rick Sanchez",
             "Alive",
-            "sjbdahsvdjhavs"
+            "https://rickandmortyapi.com/api/character/avatar/1.jpeg"
         )
     }
 }
