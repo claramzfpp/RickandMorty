@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -41,20 +43,22 @@ fun DiscoverScreen(
     modifier: Modifier = Modifier,
     viewModel: CharacterViewModel = hiltViewModel(),
 ) {
-    // collectAsStateWithLifecycle = observa o StateFlow respeitando o ciclo de vida da tela
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val isLoadingMore by viewModel.isLoadingMore.collectAsStateWithLifecycle()
     DiscoverContent(
         state = state,
+        isLoadingMore = isLoadingMore,
         onLoadMore = viewModel::loadMore,
         modifier = modifier,
     )
 }
 
-// "sem estado" (stateless): só recebe o state e o callback, e desenha
+// "sem estado" (stateless): só recebe os dados e o callback, e desenha
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DiscoverContent(
     state: CharacterUiState,
+    isLoadingMore: Boolean,
     onLoadMore: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -83,7 +87,12 @@ private fun DiscoverContent(
         // switch (Swift)
         when (state) {
             CharacterUiState.Loading -> LoadingContent(contentModifier)
-            is CharacterUiState.Loaded -> CharacterGrid(state.characters, onLoadMore, contentModifier)
+            is CharacterUiState.Loaded -> CharacterGrid(
+                characters = state.characters,
+                isLoadingMore = isLoadingMore,
+                onLoadMore = onLoadMore,
+                modifier = contentModifier,
+            )
             is CharacterUiState.Error -> ErrorContent(state.message, contentModifier)
         }
     }
@@ -102,10 +111,10 @@ private fun DiscoverTitle() {
 @Composable
 private fun CharacterGrid(
     characters: List<Character>,
+    isLoadingMore: Boolean,
     onLoadMore: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // guarda a posição/rolagem da grid (precisamos dela pra saber onde o scroll está)
     val gridState = rememberLazyGridState()
 
     // vira true quando o usuário chega perto do fim da lista.
@@ -118,7 +127,6 @@ private fun CharacterGrid(
         }
     }
 
-    // dispara "carregar mais" quando reachedEnd passa a ser true
     LaunchedEffect(reachedEnd) {
         if (reachedEnd) onLoadMore()
     }
@@ -131,9 +139,22 @@ private fun CharacterGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier,
     ) {
-        // key = { it.id } ajuda o Compose a reaproveitar os itens de forma eficiente
         items(characters, key = { it.id }) { character ->
             DiscoverCharacterCell(character)
+        }
+
+        // rodapé: ocupa a LINHA inteira (span = maxLineSpan) e mostra o spinner
+        if (isLoadingMore) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                }
+            }
         }
     }
 }
@@ -157,7 +178,6 @@ private fun ErrorContent(message: String, modifier: Modifier = Modifier) {
 private fun DiscoverContentPreview() {
     RickAndMortyTheme {
         DiscoverContent(
-            onLoadMore = {},
             state = CharacterUiState.Loaded(
                 List(4) { index ->
                     Character(
@@ -170,7 +190,9 @@ private fun DiscoverContentPreview() {
                         originName = "Earth (C-137)",
                     )
                 }
-            )
+            ),
+            isLoadingMore = false,
+            onLoadMore = {},
         )
     }
 }

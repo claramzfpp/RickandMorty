@@ -19,8 +19,10 @@ class CharacterViewModel @Inject constructor(
     private val _state = MutableStateFlow<CharacterUiState>(CharacterUiState.Loading)
     val state: StateFlow<CharacterUiState> = _state.asStateFlow()
 
-    // trava: evita disparar várias cargas ao mesmo tempo (o scroll chama loadMore repetidamente)
-    private var isLoading = false
+    // true enquanto uma página está sendo carregada.
+    // Serve de trava (evita cargas duplicadas) e de sinal pro spinner do rodapé.
+    private val _isLoadingMore = MutableStateFlow(false)
+    val isLoadingMore: StateFlow<Boolean> = _isLoadingMore.asStateFlow()
 
     init {
         // observa o flow do repository e reflete na UI
@@ -36,9 +38,9 @@ class CharacterViewModel @Inject constructor(
     }
 
     fun loadMore() {
-        if (isLoading) return // já tem uma carga em andamento
+        if (_isLoadingMore.value) return // já tem uma carga em andamento
         viewModelScope.launch {
-            isLoading = true
+            _isLoadingMore.value = true
             try {
                 repository.loadNextPage()
             } catch (e: Exception) {
@@ -48,7 +50,7 @@ class CharacterViewModel @Inject constructor(
                     _state.value = CharacterUiState.Error(e.message ?: "Erro desconhecido")
                 }
             } finally {
-                isLoading = false
+                _isLoadingMore.value = false
             }
         }
     }
