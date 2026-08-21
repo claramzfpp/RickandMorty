@@ -45,9 +45,7 @@ fun SearchScreen(
     SearchBar(
         query = searchQuery,
         onQueryChange = onSearchQueryChange,
-        onSearch = {
-            print("pesquisar")
-        },
+        onSearch = { },
         placeholder = {
             Text(
                 text = "Search characters",

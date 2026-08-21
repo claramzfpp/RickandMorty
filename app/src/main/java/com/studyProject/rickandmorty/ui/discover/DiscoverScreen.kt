@@ -88,57 +88,59 @@ private fun DiscoverContent(
     val background = MaterialTheme.colorScheme.background
     var shouldShowSearchBar by rememberSaveable { mutableStateOf(false) } //
 
-    if (shouldShowSearchBar) {
-        SearchScreen(
-            searchQuery = searchQuery,
-            searchState = searchState,
-            onSearchQueryChange = onSearchQueryChanged,
-            onClose = { shouldShowSearchBar = false },
-            onCharacterClick = onCharacterClick,
-        )
-    }
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold( // layout shell, uma especie de body com modifiers
+            modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                TopAppBar(
+                    title = { DiscoverTitle() },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = background,
+                        scrolledContainerColor = background,
+                    ),
+                    actions = {
+                        IconButton(onClick = { /* do something */
+                            shouldShowSearchBar = true
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Localized description",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    },
+                    scrollBehavior = scrollBehavior,
+                )
+            },
+            containerColor = background,
+        ) { innerPadding ->
+            val contentModifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(background)
 
-    Scaffold( // layout shell, uma especie de body com modifiers
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopAppBar(
-                title = { DiscoverTitle() },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = background,
-                    scrolledContainerColor = background,
-                ),
-                actions = {
-                    IconButton(onClick = { /* do something */
-                        shouldShowSearchBar = true
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Localized description",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                scrollBehavior = scrollBehavior,
-            )
-        },
-        containerColor = background,
-    ) { innerPadding ->
-        val contentModifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
-            .background(background)
+            // switch (Swift)
+            when (state) {
+                CharacterUiState.Loading -> LoadingContent(contentModifier)
+                is CharacterUiState.Loaded -> CharacterGrid(
+                    characters = state.characters,
+                    isLoadingMore = isLoadingMore,
+                    onLoadMore = onLoadMore,
+                    onCharacterClick = onCharacterClick,
+                    modifier = contentModifier,
+                )
+                is CharacterUiState.Error -> ErrorContent(state.message, contentModifier)
+            }
+        }
 
-        // switch (Swift)
-        when (state) {
-            CharacterUiState.Loading -> LoadingContent(contentModifier)
-            is CharacterUiState.Loaded -> CharacterGrid(
-                characters = state.characters,
-                isLoadingMore = isLoadingMore,
-                onLoadMore = onLoadMore,
+        if (shouldShowSearchBar) {
+            SearchScreen(
+                searchQuery = searchQuery,
+                searchState = searchState,
+                onSearchQueryChange = onSearchQueryChanged,
+                onClose = { shouldShowSearchBar = false },
                 onCharacterClick = onCharacterClick,
-                modifier = contentModifier,
             )
-            is CharacterUiState.Error -> ErrorContent(state.message, contentModifier)
         }
     }
 }

@@ -23,7 +23,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -97,13 +96,13 @@ private fun CharacterDetailContent(character: Character, modifier: Modifier = Mo
                 .clip(RoundedCornerShape(8.dp))
                 .border(3.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
         ) {
-        SubcomposeAsyncImage(
-            model = character.imageUrl,
-            contentDescription = null,
-            modifier = Modifier
-                .size(320.dp)
-        )
-            }
+            SubcomposeAsyncImage(
+                model = character.imageUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(320.dp)
+            )
+        }
 
         Text(
             text = character.name,
