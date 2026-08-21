@@ -10,4 +10,7 @@ interface CharacterRepository {
 
     // carrega a PRÓXIMA página e acumula na lista; não faz nada se já chegou ao fim
     suspend fun loadNextPage()
+
+    // busca por nome (primeira página apenas); não afeta a lista paginada acima
+    suspend fun searchCharacters(name: String): List<Character>
 }

@@ -14,8 +14,12 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -23,7 +27,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -36,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studyProject.rickandmorty.domain.model.Character
 import com.studyProject.rickandmorty.ui.character.CharacterUiState
 import com.studyProject.rickandmorty.ui.character.CharacterViewModel
+import com.studyProject.rickandmorty.ui.character.SearchUiState
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 @Composable
@@ -45,10 +52,16 @@ fun DiscoverScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isLoadingMore by viewModel.isLoadingMore.collectAsStateWithLifecycle()
+    val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
+    val searchState by viewModel.searchState.collectAsStateWithLifecycle()
+
     DiscoverContent(
         state = state,
         isLoadingMore = isLoadingMore,
         onLoadMore = viewModel::loadMore,
+        searchQuery = searchQuery,
+        searchState = searchState,
+        onSearchQueryChanged = viewModel::onSearchQueryChanged,
         modifier = modifier,
     )
 }
@@ -60,10 +73,23 @@ private fun DiscoverContent(
     state: CharacterUiState,
     isLoadingMore: Boolean,
     onLoadMore: () -> Unit,
+    searchQuery: String,
+    searchState: SearchUiState,
+    onSearchQueryChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val background = MaterialTheme.colorScheme.background
+    var shouldShowSearchBar by remember { mutableStateOf(false) }
+
+    if (shouldShowSearchBar) {
+        SearchScreen(
+            searchQuery = searchQuery,
+            searchState = searchState,
+            onSearchQueryChange = onSearchQueryChanged,
+            onClose = { shouldShowSearchBar = false },
+        )
+    }
 
     Scaffold(
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -74,6 +100,17 @@ private fun DiscoverContent(
                     containerColor = background,
                     scrolledContainerColor = background,
                 ),
+                actions = {
+                    IconButton(onClick = { /* do something */
+                        shouldShowSearchBar = true
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Localized description",
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                },
                 scrollBehavior = scrollBehavior,
             )
         },
@@ -139,6 +176,8 @@ private fun CharacterGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier,
     ) {
+
+
         items(characters, key = { it.id }) { character ->
             DiscoverCharacterCell(character)
         }
@@ -193,6 +232,9 @@ private fun DiscoverContentPreview() {
             ),
             isLoadingMore = false,
             onLoadMore = {},
+            searchQuery = "",
+            searchState = SearchUiState.Idle,
+            onSearchQueryChanged = {},
         )
     }
 }

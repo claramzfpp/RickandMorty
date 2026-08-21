@@ -7,6 +7,7 @@ import com.studyProject.rickandmorty.domain.repository.CharacterRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(
@@ -27,5 +28,14 @@ class CharacterRepositoryImpl @Inject constructor(
 
         // info.pages = total de páginas. Se ainda há próxima, avança; senão, marca o fim.
         nextPage = if (page < response.info.pages) page + 1 else null
+    }
+
+    override suspend fun searchCharacters(name: String): List<Character> {
+        return try {
+            api.fetchingCharacters(name = name, page = 1).results.map { it.toDomain() }
+        } catch (e: HttpException) {
+            // a API retorna 404 quando nenhum personagem bate com o nome buscado
+            if (e.code() == 404) emptyList() else throw e
+        }
     }
 }
