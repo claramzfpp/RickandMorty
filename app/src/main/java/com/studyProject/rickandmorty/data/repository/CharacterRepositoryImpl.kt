@@ -38,4 +38,8 @@ class CharacterRepositoryImpl @Inject constructor(
             if (e.code() == 404) emptyList() else throw e
         }
     }
+
+    override suspend fun getCharacterById(id: Int): Character {
+        return api.fetchingCharacter(id).toDomain()
+    }
 }

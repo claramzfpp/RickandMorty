@@ -13,4 +13,7 @@ interface CharacterRepository {
 
     // busca por nome (primeira página apenas); não afeta a lista paginada acima
     suspend fun searchCharacters(name: String): List<Character>
+
+    // busca um personagem específico por id; propaga erro (ex.: 404) se não existir
+    suspend fun getCharacterById(id: Int): Character
 }

@@ -29,6 +29,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,12 +44,15 @@ import com.studyProject.rickandmorty.domain.model.Character
 import com.studyProject.rickandmorty.ui.character.CharacterUiState
 import com.studyProject.rickandmorty.ui.character.CharacterViewModel
 import com.studyProject.rickandmorty.ui.character.SearchUiState
+import com.studyProject.rickandmorty.ui.common.ErrorContent
+import com.studyProject.rickandmorty.ui.common.LoadingContent
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 @Composable
 fun DiscoverScreen(
     modifier: Modifier = Modifier,
     viewModel: CharacterViewModel = hiltViewModel(),
+    onCharacterClick: (Int) -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isLoadingMore by viewModel.isLoadingMore.collectAsStateWithLifecycle()
@@ -62,6 +66,7 @@ fun DiscoverScreen(
         searchQuery = searchQuery,
         searchState = searchState,
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
+        onCharacterClick = onCharacterClick,
         modifier = modifier,
     )
 }
@@ -76,11 +81,12 @@ private fun DiscoverContent(
     searchQuery: String,
     searchState: SearchUiState,
     onSearchQueryChanged: (String) -> Unit,
+    onCharacterClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val background = MaterialTheme.colorScheme.background
-    var shouldShowSearchBar by remember { mutableStateOf(false) }
+    var shouldShowSearchBar by rememberSaveable { mutableStateOf(false) } //
 
     if (shouldShowSearchBar) {
         SearchScreen(
@@ -88,6 +94,7 @@ private fun DiscoverContent(
             searchState = searchState,
             onSearchQueryChange = onSearchQueryChanged,
             onClose = { shouldShowSearchBar = false },
+            onCharacterClick = onCharacterClick,
         )
     }
 
@@ -128,6 +135,7 @@ private fun DiscoverContent(
                 characters = state.characters,
                 isLoadingMore = isLoadingMore,
                 onLoadMore = onLoadMore,
+                onCharacterClick = onCharacterClick,
                 modifier = contentModifier,
             )
             is CharacterUiState.Error -> ErrorContent(state.message, contentModifier)
@@ -150,6 +158,7 @@ private fun CharacterGrid(
     characters: List<Character>,
     isLoadingMore: Boolean,
     onLoadMore: () -> Unit,
+    onCharacterClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val gridState = rememberLazyGridState()
@@ -179,7 +188,7 @@ private fun CharacterGrid(
 
 
         items(characters, key = { it.id }) { character ->
-            DiscoverCharacterCell(character)
+            DiscoverCharacterCell(character, onClick = { onCharacterClick(character.id) })
         }
 
         // rodapé: ocupa a LINHA inteira (span = maxLineSpan) e mostra o spinner
@@ -195,20 +204,6 @@ private fun CharacterGrid(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun LoadingContent(modifier: Modifier = Modifier) {
-    Box(modifier, contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-    }
-}
-
-@Composable
-private fun ErrorContent(message: String, modifier: Modifier = Modifier) {
-    Box(modifier, contentAlignment = Alignment.Center) {
-        Text(text = message, color = MaterialTheme.colorScheme.onBackground)
     }
 }
 

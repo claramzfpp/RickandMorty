@@ -2,6 +2,7 @@ package com.studyProject.rickandmorty.ui.discover
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,9 +27,13 @@ import com.studyProject.rickandmorty.domain.model.Character
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 @Composable
-fun DiscoverCharacterCell(character: Character, modifier: Modifier = Modifier) {
+fun DiscoverCharacterCell(
+    character: Character,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+) {
     Box(
-        modifier = modifier,
+        modifier = modifier.clickable(onClick = onClick),
         contentAlignment = Alignment.BottomCenter,
     ) {
         CharacterImage(character.imageUrl)

@@ -1,5 +1,6 @@
 package com.studyProject.rickandmorty.ui.discover
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -38,6 +39,7 @@ fun SearchScreen(
     searchState: SearchUiState,
     onSearchQueryChange: (String) -> Unit,
     onClose: () -> Unit,
+    onCharacterClick: (Int) -> Unit,
 ) {
     SearchBar(
         query = searchQuery,
@@ -67,7 +69,7 @@ fun SearchScreen(
                 )
             }
         },
-        content = { SearchResultsContent(searchState) },
+        content = { SearchResultsContent(searchState, onCharacterClick) },
         active = true,
         onActiveChange = { active -> if (!active) onClose() },
         colors = SearchBarDefaults.colors(containerColor = MaterialTheme.colorScheme.background),
@@ -76,9 +78,9 @@ fun SearchScreen(
 }
 
 @Composable
-private fun SearchResultsContent(searchState: SearchUiState) {
+private fun SearchResultsContent(searchState: SearchUiState, onCharacterClick: (Int) -> Unit) {
     when (searchState) {
-        SearchUiState.Idle -> Unit // nada digitado ainda, não mostra nada
+        SearchUiState.Idle -> Unit
         SearchUiState.Loading -> Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -103,7 +105,7 @@ private fun SearchResultsContent(searchState: SearchUiState) {
             } else {
                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
                     items(searchState.characters, key = { it.id }) { character ->
-                        SearchResultRow(character)
+                        SearchResultRow(character, onClick = { onCharacterClick(character.id) })
                     }
                 }
             }
@@ -120,10 +122,11 @@ private fun SearchResultsContent(searchState: SearchUiState) {
 }
 
 @Composable
-private fun SearchResultRow(character: Character) {
+private fun SearchResultRow(character: Character, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
