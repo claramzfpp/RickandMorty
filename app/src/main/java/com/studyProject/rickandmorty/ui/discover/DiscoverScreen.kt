@@ -86,7 +86,7 @@ private fun DiscoverContent(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val background = MaterialTheme.colorScheme.background
-    var shouldShowSearchBar by rememberSaveable { mutableStateOf(false) } //
+    var shouldShowSearchBar by rememberSaveable { mutableStateOf(false) } // by ... == @State
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold( // layout shell, uma especie de body com modifiers
