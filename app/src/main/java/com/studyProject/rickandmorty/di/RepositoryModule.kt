@@ -1,7 +1,9 @@
 package com.studyProject.rickandmorty.di
 
 import com.studyProject.rickandmorty.data.repository.CharacterRepositoryImpl
+import com.studyProject.rickandmorty.data.repository.FavoriteRepositoryImpl
 import com.studyProject.rickandmorty.domain.repository.CharacterRepository
+import com.studyProject.rickandmorty.domain.repository.FavoriteRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -19,4 +21,10 @@ abstract class RepositoryModule {
     abstract fun bindCharacterRepository(
         impl: CharacterRepositoryImpl
     ): CharacterRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFavoriteRepository(
+        impl: FavoriteRepositoryImpl
+    ): FavoriteRepository
 }

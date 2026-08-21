@@ -28,9 +28,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +50,7 @@ fun CharacterDetailScreen(
     viewModel: CharacterDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
     val background = MaterialTheme.colorScheme.background
 
     Scaffold(
@@ -86,6 +84,8 @@ fun CharacterDetailScreen(
             CharacterDetailUiState.Loading -> LoadingContent(contentModifier)
             is CharacterDetailUiState.Loaded -> CharacterDetailContent(
                 character = currentState.character,
+                isFavorite = isFavorite,
+                onToggleFavorite = viewModel::toggleFavorite,
                 modifier = contentModifier,
             )
             is CharacterDetailUiState.Error -> ErrorContent(currentState.message, contentModifier)
@@ -94,9 +94,12 @@ fun CharacterDetailScreen(
 }
 
 @Composable
-private fun CharacterDetailContent(character: Character, modifier: Modifier = Modifier) {
-    var isFavorite by rememberSaveable { mutableStateOf(false) }
-
+private fun CharacterDetailContent(
+    character: Character,
+    isFavorite: Boolean,
+    onToggleFavorite: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp)
@@ -115,7 +118,7 @@ private fun CharacterDetailContent(character: Character, modifier: Modifier = Mo
 
         FavoriteButton(
             isFavorite = isFavorite,
-            onClick = { isFavorite = !isFavorite },
+            onClick = onToggleFavorite,
         )
     }
 }
@@ -220,7 +223,7 @@ private fun FavoriteButton(isFavorite: Boolean, onClick: () -> Unit, modifier: M
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
 
             Text(
-                text = "Favourite",
+                text = "Favorite",
                 color = contentColor,
                 fontSize = 20.sp,
             )

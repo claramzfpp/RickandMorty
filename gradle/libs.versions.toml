@@ -24,6 +24,9 @@ navigationCompose = "2.9.8"
 # Coil (carregamento de imagem de URL)
 coil = "3.2.0"
 
+# Room (persistência local)
+room = "2.7.1"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -58,6 +61,11 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 # Coil
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+
+# Room
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 [bundles]
 # Criado para importar todas as 5 dependências de uma só vez no Gradle
