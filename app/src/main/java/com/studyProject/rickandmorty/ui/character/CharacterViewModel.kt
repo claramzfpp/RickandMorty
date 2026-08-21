@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-@HiltViewModel
+@HiltViewModel //ainda não peguei a energia disso aqui, mas funciona para injeção de dependência e envolve ciclo de vida das views
 class CharacterViewModel @Inject constructor(
     private val repository: CharacterRepository,
 ) : ViewModel() {

@@ -98,7 +98,7 @@ private fun DiscoverContent(
         )
     }
 
-    Scaffold(
+    Scaffold( // layout shell, uma especie de body com modifiers
         modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
@@ -177,7 +177,7 @@ private fun CharacterGrid(
         if (reachedEnd) onLoadMore()
     }
 
-    LazyVerticalGrid(
+    LazyVerticalGrid( // como se fosse LazyVStack dentro de uma ScrollView
         state = gridState,
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(16.dp),

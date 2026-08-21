@@ -4,7 +4,7 @@ import com.studyProject.rickandmorty.domain.model.Character
 import kotlinx.coroutines.flow.StateFlow
 
 // Interface (contrato) do repository.
-interface CharacterRepository {
+interface CharacterRepository { //basicamente uma das abstrações (inversão de dependência)
 
     val characters: StateFlow<List<Character>>
 

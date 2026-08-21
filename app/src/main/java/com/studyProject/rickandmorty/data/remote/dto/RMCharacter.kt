@@ -33,7 +33,8 @@ data class CharacterOrigin (
 
 @Serializable
 enum class CharacterStatus { // Enum (swift)
-    @SerialName("unknown") UNKNOWN, 
+    @SerialName("unknown") UNKNOWN,
+    //esse SerialName basicamente faz o mapeamento da API pro nosso enum
     @SerialName("Alive") ALIVE,
     @SerialName("Dead") DEAD;
 

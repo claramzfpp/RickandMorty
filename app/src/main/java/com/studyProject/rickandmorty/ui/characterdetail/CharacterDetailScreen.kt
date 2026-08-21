@@ -1,11 +1,14 @@
 package com.studyProject.rickandmorty.ui.characterdetail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -19,6 +22,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -81,43 +86,70 @@ fun CharacterDetailScreen(
 
 @Composable
 private fun CharacterDetailContent(character: Character, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.padding(horizontal = 16.dp)) {
+    Column(
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .size(320.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .border(3.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+        ) {
         SubcomposeAsyncImage(
             model = character.imageUrl,
             contentDescription = null,
             modifier = Modifier
-                .fillMaxWidth()
-                .height(280.dp)
-                .clip(RoundedCornerShape(12.dp)),
+                .size(320.dp)
         )
+            }
 
         Text(
             text = character.name,
             color = MaterialTheme.colorScheme.onBackground,
             fontSize = 28.sp,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .align(Alignment.CenterHorizontally)
         )
 
-        CharacterDetailRow(label = "Status", value = character.status)
-        CharacterDetailRow(label = "Species", value = character.species)
-        CharacterDetailRow(label = "Gender", value = character.gender)
-        CharacterDetailRow(label = "Origin", value = character.originName)
+        Box(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.onBackground, RoundedCornerShape(8.dp))
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .padding(bottom = 16.dp)
+            ) {
+                CharacterDetailRow(label = "Status", value = character.status)
+                CharacterDetailRow(label = "Species", value = character.species)
+                CharacterDetailRow(label = "Gender", value = character.gender)
+                CharacterDetailRow(label = "Origin", value = character.originName)
+            }
+        }
     }
 }
 
 @Composable
 private fun CharacterDetailRow(label: String, value: String) {
-    Column(modifier = Modifier.padding(top = 16.dp)) {
+    Column(
+        modifier = Modifier
+            .padding(top = 16.dp)
+        ) {
         Text(
             text = label,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 14.sp,
+            fontSize = 20.sp,
         )
         Text(
             text = value,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 18.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 24.sp,
             fontWeight = FontWeight.Medium,
         )
     }

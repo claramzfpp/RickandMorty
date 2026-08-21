@@ -13,6 +13,9 @@ import javax.inject.Inject
 class CharacterRepositoryImpl @Inject constructor(
     private val api: RickAndMortyApi,
 ) : CharacterRepository {
+    // implementação do nosso protocol (interface/contrato)
+    // o @Inject é um modo de injeção de dependência
+    // o hilt controla a construção disso
 
     private val _characters = MutableStateFlow<List<Character>>(emptyList())
     override val characters: StateFlow<List<Character>> = _characters.asStateFlow()

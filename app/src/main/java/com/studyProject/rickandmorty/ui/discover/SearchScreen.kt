@@ -1,5 +1,6 @@
 package com.studyProject.rickandmorty.ui.discover
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -130,13 +131,22 @@ private fun SearchResultRow(character: Character, onClick: () -> Unit) {
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        SubcomposeAsyncImage(
-            model = character.imageUrl,
-            contentDescription = null,
+        Box(
             modifier = Modifier
                 .size(48.dp)
-                .clip(RoundedCornerShape(8.dp)),
-        )
+                .clip(RoundedCornerShape(8.dp))
+                .border(3.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+        ) {
+            SubcomposeAsyncImage(
+                model = character.imageUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+
+                )
+        }
+
         Column(modifier = Modifier.padding(start = 12.dp)) {
             Text(
                 text = character.name,
@@ -145,7 +155,7 @@ private fun SearchResultRow(character: Character, onClick: () -> Unit) {
             )
             Text(
                 text = "${character.status} · ${character.species}",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 14.sp,
             )
         }
