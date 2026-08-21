@@ -2,10 +2,15 @@ package com.studyProject.rickandmorty.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+// valores 0–255 (overload Int do Color); alpha assume 255 sozinho
+val RMGreen = Color(151, 206, 76)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val RMPink = Color(232, 154, 199)
+
+val RMYellow = Color(240, 225, 74)
+
+val RMBrown = Color(30, 12, 12)
+
+val RMGray = Color(137, 132, 126)
+
+val RMRed = Color(225, 15, 15)

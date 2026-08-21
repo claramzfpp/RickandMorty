@@ -7,30 +7,42 @@ import com.studyProject.rickandmorty.domain.repository.CharacterRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import retrofit2.HttpException
 import javax.inject.Inject
 
-// Implementação concreta da interface, na camada data.
-// É esta que usa Retrofit. Poderia existir outra (mock, cache) sem a UI saber.
-// @Inject constructor = o Hilt sabe como criar isto (injetando a api).
 class CharacterRepositoryImpl @Inject constructor(
-    private val api: RickAndMortyApi
+    private val api: RickAndMortyApi,
 ) : CharacterRepository {
+    // implementação do nosso protocol (interface/contrato)
+    // o @Inject é um modo de injeção de dependência
+    // o hilt controla a construção disso
 
-    // o flow de personagens, já no modelo de domínio (Character)
     private val _characters = MutableStateFlow<List<Character>>(emptyList())
     override val characters: StateFlow<List<Character>> = _characters.asStateFlow()
 
-    // busca e ACUMULA (paginação). Mapeia DTO -> domínio logo após receber.
-    override suspend fun loadCharacters(page: Int) {
-        val results = api.fetchingCharacters(name = null, page = page).results
-            .map { it.toDomain() }
-        _characters.value = _characters.value + results
+    // próxima página a buscar; null quando não há mais páginas
+    private var nextPage: Int? = 1
+
+    override suspend fun loadNextPage() {
+        val page = nextPage ?: return // já carregou tudo -> sai
+
+        val response = api.fetchingCharacters(name = null, page = page)
+        _characters.value = _characters.value + response.results.map { it.toDomain() }
+
+        // info.pages = total de páginas. Se ainda há próxima, avança; senão, marca o fim.
+        nextPage = if (page < response.info.pages) page + 1 else null
     }
 
-    // busca por nome e SUBSTITUI a lista inteira
-    override suspend fun searchByName(name: String, page: Int) {
-        val results = api.fetchingCharacters(name = name, page = page).results
-            .map { it.toDomain() }
-        _characters.value = results
+    override suspend fun searchCharacters(name: String): List<Character> {
+        return try {
+            api.fetchingCharacters(name = name, page = 1).results.map { it.toDomain() }
+        } catch (e: HttpException) {
+            // a API retorna 404 quando nenhum personagem bate com o nome buscado
+            if (e.code() == 404) emptyList() else throw e
+        }
+    }
+
+    override suspend fun getCharacterById(id: Int): Character {
+        return api.fetchingCharacter(id).toDomain()
     }
 }

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable // Codable (Swift)
-data class GetAllCharacterResponse(
+data class GetAllCharacterResponse( //energia do struct
     val info: GetAllCharacterResponseInfo, // val = let | var = var
     val results: List<RMCharacter> // [RMCharacter] (Swift)
 )
@@ -34,6 +34,7 @@ data class CharacterOrigin (
 @Serializable
 enum class CharacterStatus { // Enum (swift)
     @SerialName("unknown") UNKNOWN,
+    //esse SerialName basicamente faz o mapeamento da API pro nosso enum
     @SerialName("Alive") ALIVE,
     @SerialName("Dead") DEAD;
 

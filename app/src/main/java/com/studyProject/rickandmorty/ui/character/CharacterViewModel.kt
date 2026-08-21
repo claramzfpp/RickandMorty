@@ -5,26 +5,44 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studyProject.rickandmorty.domain.repository.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// @HiltViewModel + @Inject constructor: o Hilt injeta o repository automaticamente
-@HiltViewModel
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@HiltViewModel //ainda não peguei a energia disso aqui, mas funciona para injeção de dependência e envolve ciclo de vida das views
 class CharacterViewModel @Inject constructor(
-    private val repository: CharacterRepository
-) : ViewModel() { // ObservableObject (SwiftUI)
+    private val repository: CharacterRepository,
+) : ViewModel() {
 
-    private var pageNumber: Int = 1
-
-    // estado da UI (loading/loaded/error)
     private val _state = MutableStateFlow<CharacterUiState>(CharacterUiState.Loading)
     val state: StateFlow<CharacterUiState> = _state.asStateFlow()
 
+    // true enquanto uma página está sendo carregada.
+    // Serve de trava (evita cargas duplicadas) e de sinal pro spinner do rodapé.
+    private val _isLoadingMore = MutableStateFlow(false)
+    val isLoadingMore: StateFlow<Boolean> = _isLoadingMore.asStateFlow()
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _searchState = MutableStateFlow<SearchUiState>(SearchUiState.Idle)
+    val searchState: StateFlow<SearchUiState> = _searchState.asStateFlow()
+
     init {
-        // OBSERVA o flow do repository: sempre que a lista muda lá, refletimos aqui.
+        // observa o flow do repository e reflete na UI
         viewModelScope.launch {
             repository.characters.collect { characters ->
                 if (characters.isNotEmpty()) {
@@ -33,29 +51,48 @@ class CharacterViewModel @Inject constructor(
                 }
             }
         }
-        fetchCharacters()
-    }
+        loadMore() // primeira página
 
-    fun fetchCharacters() {
-        viewModelScope.launch {
-            _state.value = CharacterUiState.Loading
-            try {
-                repository.loadCharacters(pageNumber)
-            } catch (e: Exception) {
-                Log.e(TAG, "Falhou: ${e.message}", e)
-                _state.value = CharacterUiState.Error(e.message ?: "Erro desconhecido")
+        // espera o usuário parar de digitar (300ms) antes de buscar;
+        // flatMapLatest cancela uma busca ainda em andamento se o texto mudar de novo
+        _searchQuery
+            .debounce(300)
+            .distinctUntilChanged()
+            .flatMapLatest { query ->
+                if (query.isBlank()) {
+                    flowOf(SearchUiState.Idle)
+                } else {
+                    flow {
+                        emit(SearchUiState.Loading)
+                        emit(SearchUiState.Loaded(repository.searchCharacters(query)))
+                    }.catch { e ->
+                        Log.e(TAG, "Busca falhou: ${e.message}", e)
+                        emit(SearchUiState.Error(e.message ?: "Erro desconhecido"))
+                    }
+                }
             }
-        }
+            .onEach { _searchState.value = it }
+            .launchIn(viewModelScope)
     }
 
-    fun fetchByName(name: String) {
+    fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
+    }
+
+    fun loadMore() {
+        if (_isLoadingMore.value) return // já tem uma carga em andamento
         viewModelScope.launch {
-            _state.value = CharacterUiState.Loading
+            _isLoadingMore.value = true
             try {
-                repository.searchByName(name = name, page = pageNumber)
+                repository.loadNextPage()
             } catch (e: Exception) {
                 Log.e(TAG, "Falhou: ${e.message}", e)
-                _state.value = CharacterUiState.Error(e.message ?: "Erro desconhecido")
+                // só vira erro de tela cheia se ainda não temos nada exibido
+                if (_state.value !is CharacterUiState.Loaded) {
+                    _state.value = CharacterUiState.Error(e.message ?: "Erro desconhecido")
+                }
+            } finally {
+                _isLoadingMore.value = false
             }
         }
     }

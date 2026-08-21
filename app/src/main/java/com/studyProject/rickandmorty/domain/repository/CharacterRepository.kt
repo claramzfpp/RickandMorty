@@ -3,14 +3,17 @@ package com.studyProject.rickandmorty.domain.repository
 import com.studyProject.rickandmorty.domain.model.Character
 import kotlinx.coroutines.flow.StateFlow
 
-// Interface (contrato) do repository, no domínio.
-// A UI/ViewModel dependem DISTO — não da implementação concreta.
-// Assim dá pra trocar a fonte (API real, mock, cache) sem mexer no resto.
-interface CharacterRepository {
+// Interface (contrato) do repository.
+interface CharacterRepository { //basicamente uma das abstrações (inversão de dependência)
 
     val characters: StateFlow<List<Character>>
 
-    suspend fun loadCharacters(page: Int)
+    // carrega a PRÓXIMA página e acumula na lista; não faz nada se já chegou ao fim
+    suspend fun loadNextPage()
 
-    suspend fun searchByName(name: String, page: Int)
+    // busca por nome (primeira página apenas); não afeta a lista paginada acima
+    suspend fun searchCharacters(name: String): List<Character>
+
+    // busca um personagem específico por id; propaga erro (ex.: 404) se não existir
+    suspend fun getCharacterById(id: Int): Character
 }
