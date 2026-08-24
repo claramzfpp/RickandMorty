@@ -62,10 +62,14 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 
-# Room
+# Room - responsável por fazer a persistência de dados
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+# de modo geral, em android usamos muitas libs para fazermos abstrações e lidar com alguns pontos
+# como gerenciar a chamada de api e fazer a persistência de dados
+
 
 [bundles]
 # Criado para importar todas as 5 dependências de uma só vez no Gradle

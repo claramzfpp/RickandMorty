@@ -1,6 +1,6 @@
 package com.studyProject.rickandmorty.data.local
 
-import androidx.room.Dao
+import androidx.room.Dao //esse Room é como se fosse um CoreData
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FavoriteCharacterDao {
 
-    @Query("SELECT characterId FROM favorite_characters")
+    @Query("SELECT characterId FROM favorite_characters") //descreve o que deve ser feito e o room faz sozinho
     fun observeFavoriteIds(): Flow<List<Int>>
 
     @Query("SELECT EXISTS(SELECT 1 FROM favorite_characters WHERE characterId = :characterId)")

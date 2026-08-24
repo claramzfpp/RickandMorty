@@ -22,7 +22,7 @@ fun CharacterGrid(
     gridState: LazyGridState = rememberLazyGridState(),
     footer: LazyGridScope.() -> Unit = {},
 ) {
-    LazyVerticalGrid(
+    LazyVerticalGrid( //como se fosse a uma LazyVGrid (swift)
         state = gridState,
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(16.dp),

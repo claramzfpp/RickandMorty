@@ -70,7 +70,7 @@ private fun FavoritesContent(
             .padding(innerPadding)
             .background(background)
 
-        when (state) {
+        when (state) { //uma grande swich
             FavoritesUiState.Loading -> LoadingContent(contentModifier)
             is FavoritesUiState.Loaded -> if (state.characters.isEmpty()) {
                 EmptyFavoritesContent(contentModifier)

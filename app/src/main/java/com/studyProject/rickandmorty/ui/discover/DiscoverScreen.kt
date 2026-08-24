@@ -95,7 +95,7 @@ private fun DiscoverContent(
                         scrolledContainerColor = background,
                     ),
                     actions = {
-                        IconButton(onClick = { /* do something */
+                        IconButton(onClick = {
                             shouldShowSearchBar = true
                         }) {
                             Icon(

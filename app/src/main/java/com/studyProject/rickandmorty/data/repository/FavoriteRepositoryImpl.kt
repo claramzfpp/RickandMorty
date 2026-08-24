@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class FavoriteRepositoryImpl @Inject constructor(
+class FavoriteRepositoryImpl @Inject constructor( //mesma energia de repository padrão
     private val dao: FavoriteCharacterDao,
 ) : FavoriteRepository {
 
