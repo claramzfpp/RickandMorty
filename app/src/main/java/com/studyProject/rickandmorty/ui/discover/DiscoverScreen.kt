@@ -1,16 +1,11 @@
 package com.studyProject.rickandmorty.ui.discover
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +39,7 @@ import com.studyProject.rickandmorty.domain.model.Character
 import com.studyProject.rickandmorty.ui.character.CharacterUiState
 import com.studyProject.rickandmorty.ui.character.CharacterViewModel
 import com.studyProject.rickandmorty.ui.character.SearchUiState
+import com.studyProject.rickandmorty.ui.common.CharacterGrid as SharedCharacterGrid
 import com.studyProject.rickandmorty.ui.common.ErrorContent
 import com.studyProject.rickandmorty.ui.common.LoadingContent
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
@@ -179,34 +175,27 @@ private fun CharacterGrid(
         if (reachedEnd) onLoadMore()
     }
 
-    LazyVerticalGrid( // como se fosse LazyVStack dentro de uma ScrollView
-        state = gridState,
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    SharedCharacterGrid(
+        characters = characters,
+        onCharacterClick = onCharacterClick,
         modifier = modifier,
-    ) {
-
-
-        items(characters, key = { it.id }) { character ->
-            DiscoverCharacterCell(character, onClick = { onCharacterClick(character.id) })
-        }
-
-        // rodapé: ocupa a LINHA inteira (span = maxLineSpan) e mostra o spinner
-        if (isLoadingMore) {
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+        gridState = gridState,
+        footer = {
+            // rodapé: ocupa a LINHA inteira (span = maxLineSpan) e mostra o spinner
+            if (isLoadingMore) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
+                    }
                 }
             }
-        }
-    }
+        },
+    )
 }
 
 @Preview(showBackground = true)

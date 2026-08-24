@@ -1,12 +1,20 @@
 package com.studyProject.rickandmorty.ui.navigation
 
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.studyProject.rickandmorty.ui.characterdetail.CharacterDetailScreen
 import com.studyProject.rickandmorty.ui.discover.DiscoverScreen
+import com.studyProject.rickandmorty.ui.favorites.FavoritesScreen
 
 
 // NavController == NavigationPath (swift)
@@ -14,18 +22,45 @@ import com.studyProject.rickandmorty.ui.discover.DiscoverScreen
 
 @Composable
 fun RickAndMortyNavHost(navController: NavHostController = rememberNavController()) {
-    NavHost(navController = navController, startDestination = Screen.Discover) {
-        composable<Screen.Discover> {
-            DiscoverScreen(
-                onCharacterClick = { characterId ->
-                    navController.navigate(Screen.CharacterDetail(characterId))
-                },
-            )
+    val backStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = backStackEntry?.destination
+    val showBottomBar = currentDestination?.hasRoute<Screen.Discover>() == true ||
+        currentDestination?.hasRoute<Screen.Favorites>() == true
+
+    Scaffold(
+        // sem topBar aqui; cada tela já reserva o inset da status bar na própria Scaffold.
+        // Sem isso, o inset do sistema (status bar / gesture bar) seria contado duas vezes.
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        bottomBar = {
+            if (showBottomBar) {
+                RickAndMortyBottomBar(navController = navController, currentDestination = currentDestination)
+            }
         }
-        composable<Screen.CharacterDetail> {
-            CharacterDetailScreen(
-                onBackClick = { navController.popBackStack() },
-            )
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = Screen.Discover,
+            modifier = Modifier.padding(innerPadding),
+        ) {
+            composable<Screen.Discover> {
+                DiscoverScreen(
+                    onCharacterClick = { characterId ->
+                        navController.navigate(Screen.CharacterDetail(characterId))
+                    },
+                )
+            }
+            composable<Screen.Favorites> {
+                FavoritesScreen(
+                    onCharacterClick = { characterId ->
+                        navController.navigate(Screen.CharacterDetail(characterId))
+                    },
+                )
+            }
+            composable<Screen.CharacterDetail> {
+                CharacterDetailScreen(
+                    onBackClick = { navController.popBackStack() },
+                )
+            }
         }
     }
 }
