@@ -74,4 +74,9 @@ dependencies {
     // Coil (imagens de URL)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+
+    // Room (persistência local dos favoritos)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 }

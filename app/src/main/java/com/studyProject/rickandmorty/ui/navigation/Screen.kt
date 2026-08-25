@@ -9,5 +9,8 @@ sealed interface Screen {
     data object Discover : Screen
 
     @Serializable
+    data object Favorites : Screen
+
+    @Serializable
     data class CharacterDetail(val characterId: Int) : Screen
 }
