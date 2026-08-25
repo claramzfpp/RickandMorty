@@ -44,3 +44,8 @@ No API keys or `.env` setup are required — the Rick and Morty API is public.
 - [#1 — networking layer](https://github.com/claramzfpp/RickandMorty/pull/1)
 - [#2 — discover tab + character details](https://github.com/claramzfpp/RickandMorty/pull/2)
 - [#3 — favorites tab + persistence](https://github.com/claramzfpp/RickandMorty/pull/3)
+
+
+
+https://github.com/user-attachments/assets/cec3b649-0b4f-45e9-8727-92f4b303557c
+
