@@ -1,18 +1,11 @@
 package com.studyProject.rickandmorty.ui.discover
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -31,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
@@ -48,7 +39,7 @@ import com.studyProject.rickandmorty.ui.common.CharacterCell
 import com.studyProject.rickandmorty.ui.common.CharacterCellSize
 import com.studyProject.rickandmorty.ui.common.ErrorContent
 import com.studyProject.rickandmorty.ui.common.LoadingContent
-import com.studyProject.rickandmorty.ui.theme.RMBrown
+import com.studyProject.rickandmorty.ui.common.RMCarousel
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 @Composable
@@ -162,41 +153,11 @@ private fun CharacterCarousel(
     onSeeAllClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = "Characters",
-                color = RMBrown,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-            )
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable(onClick = onSeeAllClick),
-            ) {
-                Text(
-                    text = "See all",
-                    color = RMBrown,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(modifier = Modifier.width(2.dp))
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = RMBrown,
-                    modifier = Modifier.size(16.dp),
-                )
-            }
-        }
-
+    RMCarousel(
+        title = "Characters",
+        onSeeAllClick = onSeeAllClick,
+        modifier = modifier,
+    ) {
         LazyRow(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
