@@ -18,15 +18,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.studyProject.rickandmorty.ui.theme.RMBrown
 
+
 @Composable
 fun RMCarousel(
     title: String,
-    onSeeAllClick: () -> Unit,
+    onSeeAllClick: () -> Unit = {},
     modifier: Modifier = Modifier,
+    shouldShowSeeAll: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     Column(modifier = modifier) {
@@ -44,23 +47,25 @@ fun RMCarousel(
                 fontWeight = FontWeight.Bold,
             )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.clickable(onClick = onSeeAllClick),
-            ) {
-                Text(
-                    text = "See all",
-                    color = RMBrown,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(modifier = Modifier.width(2.dp))
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                    contentDescription = null,
-                    tint = RMBrown,
-                    modifier = Modifier.size(16.dp),
-                )
+            if (shouldShowSeeAll) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clickable(onClick = onSeeAllClick),
+                ) {
+                    Text(
+                        text = "See all",
+                        color = RMBrown,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Spacer(modifier = Modifier.width(2.dp))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = RMBrown,
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
             }
         }
 

@@ -3,8 +3,10 @@ package com.studyProject.rickandmorty.ui.discover
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -37,6 +39,7 @@ import com.studyProject.rickandmorty.ui.character.CharacterViewModel
 import com.studyProject.rickandmorty.ui.character.SearchUiState
 import com.studyProject.rickandmorty.ui.common.CharacterCell
 import com.studyProject.rickandmorty.ui.common.CharacterCellSize
+import com.studyProject.rickandmorty.ui.common.EpisodeCell
 import com.studyProject.rickandmorty.ui.common.ErrorContent
 import com.studyProject.rickandmorty.ui.common.LoadingContent
 import com.studyProject.rickandmorty.ui.common.RMCarousel
@@ -106,21 +109,26 @@ private fun DiscoverContent(
             },
             containerColor = background,
         ) { innerPadding ->
-            val contentModifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .background(background)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .background(background),
+            ) {
+                EpisodeCarousel(modifier = Modifier.fillMaxWidth())
 
-            // switch (Swift)
-            when (state) {
-                CharacterUiState.Loading -> LoadingContent(contentModifier)
-                is CharacterUiState.Loaded -> CharacterCarousel(
-                    characters = state.characters,
-                    onCharacterClick = onCharacterClick,
-                    onSeeAllClick = onSeeAllClick,
-                    modifier = contentModifier,
-                )
-                is CharacterUiState.Error -> ErrorContent(state.message, contentModifier)
+                // switch (Swift)
+                when (state) {
+                    CharacterUiState.Loading -> LoadingContent(Modifier.weight(1f).fillMaxWidth())
+                    is CharacterUiState.Loaded -> CharacterCarousel(
+                        characters = state.characters,
+                        onCharacterClick = onCharacterClick,
+                        onSeeAllClick = onSeeAllClick,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    is CharacterUiState.Error -> ErrorContent(state.message, Modifier.weight(1f).fillMaxWidth())
+                }
             }
         }
 
@@ -167,6 +175,32 @@ private fun CharacterCarousel(
                     character,
                     size = CharacterCellSize.Discover,
                     onClick = { onCharacterClick(character.id) },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EpisodeCarousel(
+    modifier: Modifier = Modifier,
+) {
+    val seasonNumber = (1..10).toList()
+    val episodesNumber = arrayOf(10, 11, 8, 9)
+    
+    RMCarousel(
+        title = "Episodes",
+        modifier = modifier,
+        shouldShowSeeAll = false
+    ) {
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            items(seasonNumber, key = { it }) { season ->
+                EpisodeCell(
+                    season,
+                    episodesNumber.random()
                 )
             }
         }

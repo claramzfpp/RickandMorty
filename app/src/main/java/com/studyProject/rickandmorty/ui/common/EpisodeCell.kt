@@ -16,12 +16,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.studyProject.rickandmorty.ui.theme.RMGreen
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.unit.Dp
 import com.studyProject.rickandmorty.ui.theme.RMBrown
 import com.studyProject.rickandmorty.ui.theme.RMPink
 import com.studyProject.rickandmorty.ui.theme.RMYellow
 
 @Composable
-private fun EpisodeCell(
+fun EpisodeCell(
     seasonNumber: Int,
     episodesNumber: Int
 ) {
@@ -52,9 +53,9 @@ private fun EpisodeInfo(
 
         Box(
             modifier = Modifier
-                .size(width = 42.dp, height = 4.dp)
+                .size(width = 42.dp, height = 7.dp)
                 .background(
-                    color = colorArray.random(),
+                    color = colorArray[(seasonNumber - 1) % colorArray.size],
                     shape = RoundedCornerShape(12.dp)
                 )
         )
