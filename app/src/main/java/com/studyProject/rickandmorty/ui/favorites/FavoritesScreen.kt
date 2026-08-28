@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studyProject.rickandmorty.domain.model.Character
+import com.studyProject.rickandmorty.ui.common.CharacterCellSize
 import com.studyProject.rickandmorty.ui.common.CharacterGrid
 import com.studyProject.rickandmorty.ui.common.ErrorContent
 import com.studyProject.rickandmorty.ui.common.LoadingContent
@@ -79,6 +80,7 @@ private fun FavoritesContent(
                     characters = state.characters,
                     onCharacterClick = onCharacterClick,
                     modifier = contentModifier,
+                    size = CharacterCellSize.Grid,
                 )
             }
             is FavoritesUiState.Error -> ErrorContent(state.message, contentModifier)

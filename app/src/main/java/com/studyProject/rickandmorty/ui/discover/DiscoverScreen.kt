@@ -39,6 +39,7 @@ import com.studyProject.rickandmorty.domain.model.Character
 import com.studyProject.rickandmorty.ui.character.CharacterUiState
 import com.studyProject.rickandmorty.ui.character.CharacterViewModel
 import com.studyProject.rickandmorty.ui.character.SearchUiState
+import com.studyProject.rickandmorty.ui.common.CharacterCellSize
 import com.studyProject.rickandmorty.ui.common.CharacterGrid as SharedCharacterGrid
 import com.studyProject.rickandmorty.ui.common.ErrorContent
 import com.studyProject.rickandmorty.ui.common.LoadingContent
@@ -179,6 +180,7 @@ private fun CharacterGrid(
         characters = characters,
         onCharacterClick = onCharacterClick,
         modifier = modifier,
+        size = CharacterCellSize.Discover,
         gridState = gridState,
         footer = {
             // rodapé: ocupa a LINHA inteira (span = maxLineSpan) e mostra o spinner

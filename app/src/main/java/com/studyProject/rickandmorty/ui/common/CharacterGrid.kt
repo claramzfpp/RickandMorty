@@ -12,13 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.studyProject.rickandmorty.domain.model.Character
-import com.studyProject.rickandmorty.ui.discover.DiscoverCharacterCell
 
 @Composable
 fun CharacterGrid(
     characters: List<Character>,
     onCharacterClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    size: CharacterCellSize = CharacterCellSize.Discover,
     gridState: LazyGridState = rememberLazyGridState(),
     footer: LazyGridScope.() -> Unit = {},
 ) {
@@ -31,7 +31,7 @@ fun CharacterGrid(
         modifier = modifier,
     ) {
         items(characters, key = { it.id }) { character ->
-            DiscoverCharacterCell(character, onClick = { onCharacterClick(character.id) })
+            CharacterCell(character, size = size, onClick = { onCharacterClick(character.id) })
         }
 
         footer()

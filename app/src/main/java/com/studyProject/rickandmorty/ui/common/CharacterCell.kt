@@ -1,4 +1,4 @@
-package com.studyProject.rickandmorty.ui.discover
+package com.studyProject.rickandmorty.ui.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,6 +24,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.SubcomposeAsyncImage
@@ -34,23 +35,32 @@ import com.studyProject.rickandmorty.ui.theme.RMRed
 import com.studyProject.rickandmorty.ui.theme.RMYellow
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
+enum class CharacterCellSize(val width: Dp, val height: Dp) {
+    Discover(width = 140.dp, height = 212.dp),
+    Grid(width = 163.dp, height = 215.dp),
+}
+
 @Composable
-fun DiscoverCharacterCell(
+fun CharacterCell(
     character: Character,
     modifier: Modifier = Modifier,
+    size: CharacterCellSize = CharacterCellSize.Discover,
     onClick: () -> Unit = {},
 ) {
+    val imageSize = size.width
+    val labelHeight = size.height - size.width
+
     Box(
         modifier = modifier.clickable(onClick = onClick),
         contentAlignment = Alignment.BottomCenter,
     ) {
-        CharacterImage(character.imageUrl)
-        CharacterLabel(character.name, character.status)
+        CharacterImage(character.imageUrl, imageSize, size.height)
+        CharacterLabel(character.name, character.status, imageSize, labelHeight)
     }
 }
 
 @Composable
-private fun CharacterLabel(name: String, status: String) {
+private fun CharacterLabel(name: String, status: String, width: Dp, height: Dp) {
     val roundedCornerShape = RoundedCornerShape(
         topStart = 0.dp,
         topEnd = 0.dp,
@@ -60,18 +70,17 @@ private fun CharacterLabel(name: String, status: String) {
 
     Column(
         modifier = Modifier
-            .width(140.dp)
-            .height(72.dp)
+            .width(width)
+            .height(height)
             .clip(roundedCornerShape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(8.dp, 10.dp, 8.dp)
+            .padding(horizontal = 7.dp, vertical = 5.dp),
     ) {
         Text(
             text = name,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
-            maxLines = 1
         )
 
         StatusBadge(status)
@@ -115,10 +124,10 @@ private fun StatusBadge(status: String) {
 }
 
 @Composable
-private fun CharacterImage(imageUrl: String) {
+private fun CharacterImage(imageUrl: String, imageSize: Dp, cardHeight: Dp) {
     Box(
         modifier = Modifier
-            .size(140.dp, 212.dp)
+            .size(imageSize, cardHeight)
             .clip(RoundedCornerShape(8.dp))
             .border(3.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
     ) {
@@ -133,7 +142,7 @@ private fun CharacterImage(imageUrl: String) {
                 }
             },
             modifier = Modifier
-                .size(140.dp, 140.dp)
+                .size(imageSize, imageSize)
                 .background(MaterialTheme.colorScheme.background), // cor de fundo enquanto a imagem carrega
         )
     }
@@ -141,9 +150,9 @@ private fun CharacterImage(imageUrl: String) {
 
 @Preview(showBackground = true)
 @Composable
-private fun DiscoverCharacterCellPreview() {
+private fun CharacterCellDiscoverPreview() {
     RickAndMortyTheme {
-        DiscoverCharacterCell(
+        CharacterCell(
             Character(
                 id = 1,
                 name = "Rick Sanchez",
@@ -152,7 +161,27 @@ private fun DiscoverCharacterCellPreview() {
                 gender = "Male",
                 imageUrl = "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
                 originName = "Earth (C-137)",
-            )
+            ),
+            size = CharacterCellSize.Discover,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CharacterCellGridPreview() {
+    RickAndMortyTheme {
+        CharacterCell(
+            Character(
+                id = 1,
+                name = "Rick Sanchez",
+                status = "Alive",
+                species = "Human",
+                gender = "Male",
+                imageUrl = "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
+                originName = "Earth (C-137)",
+            ),
+            size = CharacterCellSize.Grid,
         )
     }
 }
