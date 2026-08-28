@@ -37,7 +37,7 @@ import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 enum class CharacterCellSize(val width: Dp, val height: Dp) {
     Discover(width = 140.dp, height = 212.dp),
-    Grid(width = 163.dp, height = 215.dp),
+    Grid(width = 163.dp, height = 232.dp),
 }
 
 @Composable
@@ -81,6 +81,7 @@ private fun CharacterLabel(name: String, status: String, width: Dp, height: Dp) 
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
+            maxLines = 1
         )
 
         StatusBadge(status)

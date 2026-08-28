@@ -1,29 +1,34 @@
 package com.studyProject.rickandmorty.ui.discover
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,10 +44,11 @@ import com.studyProject.rickandmorty.domain.model.Character
 import com.studyProject.rickandmorty.ui.character.CharacterUiState
 import com.studyProject.rickandmorty.ui.character.CharacterViewModel
 import com.studyProject.rickandmorty.ui.character.SearchUiState
+import com.studyProject.rickandmorty.ui.common.CharacterCell
 import com.studyProject.rickandmorty.ui.common.CharacterCellSize
-import com.studyProject.rickandmorty.ui.common.CharacterGrid as SharedCharacterGrid
 import com.studyProject.rickandmorty.ui.common.ErrorContent
 import com.studyProject.rickandmorty.ui.common.LoadingContent
+import com.studyProject.rickandmorty.ui.theme.RMBrown
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 @Composable
@@ -50,20 +56,19 @@ fun DiscoverScreen(
     modifier: Modifier = Modifier,
     viewModel: CharacterViewModel = hiltViewModel(),
     onCharacterClick: (Int) -> Unit = {},
+    onSeeAllClick: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val isLoadingMore by viewModel.isLoadingMore.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchState by viewModel.searchState.collectAsStateWithLifecycle()
 
     DiscoverContent(
         state = state,
-        isLoadingMore = isLoadingMore,
-        onLoadMore = viewModel::loadMore,
         searchQuery = searchQuery,
         searchState = searchState,
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
         onCharacterClick = onCharacterClick,
+        onSeeAllClick = onSeeAllClick,
         modifier = modifier,
     )
 }
@@ -73,12 +78,11 @@ fun DiscoverScreen(
 @Composable
 private fun DiscoverContent(
     state: CharacterUiState,
-    isLoadingMore: Boolean,
-    onLoadMore: () -> Unit,
     searchQuery: String,
     searchState: SearchUiState,
     onSearchQueryChanged: (String) -> Unit,
     onCharacterClick: (Int) -> Unit = {},
+    onSeeAllClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -119,11 +123,10 @@ private fun DiscoverContent(
             // switch (Swift)
             when (state) {
                 CharacterUiState.Loading -> LoadingContent(contentModifier)
-                is CharacterUiState.Loaded -> CharacterGrid(
+                is CharacterUiState.Loaded -> CharacterCarousel(
                     characters = state.characters,
-                    isLoadingMore = isLoadingMore,
-                    onLoadMore = onLoadMore,
                     onCharacterClick = onCharacterClick,
+                    onSeeAllClick = onSeeAllClick,
                     modifier = contentModifier,
                 )
                 is CharacterUiState.Error -> ErrorContent(state.message, contentModifier)
@@ -153,51 +156,60 @@ private fun DiscoverTitle() {
 }
 
 @Composable
-private fun CharacterGrid(
+private fun CharacterCarousel(
     characters: List<Character>,
-    isLoadingMore: Boolean,
-    onLoadMore: () -> Unit,
     onCharacterClick: (Int) -> Unit,
+    onSeeAllClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val gridState = rememberLazyGridState()
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "Characters",
+                color = RMBrown,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+            )
 
-    // vira true quando o usuário chega perto do fim da lista.
-    // derivedStateOf = recalcula só quando os valores lidos mudam (eficiente).
-    val reachedEnd by remember {
-        derivedStateOf {
-            val lastVisible = gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-            val total = gridState.layoutInfo.totalItemsCount
-            total > 0 && lastVisible >= total - 4 // dentro dos últimos 4 itens
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable(onClick = onSeeAllClick),
+            ) {
+                Text(
+                    text = "See all",
+                    color = RMBrown,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+                Spacer(modifier = Modifier.width(2.dp))
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = null,
+                    tint = RMBrown,
+                    modifier = Modifier.size(16.dp),
+                )
+            }
+        }
+
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            items(characters.take(5), key = { it.id }) { character ->
+                CharacterCell(
+                    character,
+                    size = CharacterCellSize.Discover,
+                    onClick = { onCharacterClick(character.id) },
+                )
+            }
         }
     }
-
-    LaunchedEffect(reachedEnd) {
-        if (reachedEnd) onLoadMore()
-    }
-
-    SharedCharacterGrid(
-        characters = characters,
-        onCharacterClick = onCharacterClick,
-        modifier = modifier,
-        size = CharacterCellSize.Discover,
-        gridState = gridState,
-        footer = {
-            // rodapé: ocupa a LINHA inteira (span = maxLineSpan) e mostra o spinner
-            if (isLoadingMore) {
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
-                    }
-                }
-            }
-        },
-    )
 }
 
 @Preview(showBackground = true)
@@ -218,11 +230,10 @@ private fun DiscoverContentPreview() {
                     )
                 }
             ),
-            isLoadingMore = false,
-            onLoadMore = {},
             searchQuery = "",
             searchState = SearchUiState.Idle,
             onSearchQueryChanged = {},
+            onSeeAllClick = {},
         )
     }
 }
