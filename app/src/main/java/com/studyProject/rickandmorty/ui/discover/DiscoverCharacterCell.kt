@@ -5,10 +5,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.SubcomposeAsyncImage
 import com.studyProject.rickandmorty.domain.model.Character
+import com.studyProject.rickandmorty.ui.theme.RMGray
+import com.studyProject.rickandmorty.ui.theme.RMGreen
+import com.studyProject.rickandmorty.ui.theme.RMRed
+import com.studyProject.rickandmorty.ui.theme.RMYellow
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 @Composable
@@ -52,23 +60,57 @@ private fun CharacterLabel(name: String, status: String) {
 
     Column(
         modifier = Modifier
-            .width(170.dp)
+            .width(140.dp)
+            .height(72.dp)
             .clip(roundedCornerShape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(horizontal = 7.dp, vertical = 5.dp),
+            .padding(8.dp, 10.dp, 8.dp)
     ) {
         Text(
             text = name,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 18.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
+            maxLines = 1
         )
 
-        Text(
-            text = "Status: $status",
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 16.sp,
-        )
+        StatusBadge(status)
+    }
+}
+
+@Composable
+private fun StatusBadge(status: String) {
+    val statusColor = when (status.lowercase()) {
+        "alive" -> RMGreen
+        "dead" -> RMRed
+        else -> RMYellow
+    }
+
+    Box(
+        modifier = Modifier
+            .height(24.dp)
+            .background(RMGray, RoundedCornerShape(12.dp)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 10.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(7.dp)
+                    .background(statusColor, CircleShape),
+            )
+
+            Spacer(modifier = Modifier.width(5.dp))
+
+            Text(
+                text = status,
+                color = statusColor,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+        }
     }
 }
 
@@ -76,7 +118,7 @@ private fun CharacterLabel(name: String, status: String) {
 private fun CharacterImage(imageUrl: String) {
     Box(
         modifier = Modifier
-            .size(170.dp, 180.dp)
+            .size(140.dp, 212.dp)
             .clip(RoundedCornerShape(8.dp))
             .border(3.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
     ) {
@@ -91,8 +133,7 @@ private fun CharacterImage(imageUrl: String) {
                 }
             },
             modifier = Modifier
-                .size(170.dp, 180.dp)
-                .clip(RoundedCornerShape(8.dp))
+                .size(140.dp, 140.dp)
                 .background(MaterialTheme.colorScheme.background), // cor de fundo enquanto a imagem carrega
         )
     }
