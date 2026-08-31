@@ -44,6 +44,7 @@ fun AllLocationsScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LocationViewModel = hiltViewModel(),
+    onLocationClick: (Int) -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val isLoadingMore by viewModel.isLoadingMore.collectAsStateWithLifecycle()
@@ -53,6 +54,7 @@ fun AllLocationsScreen(
         isLoadingMore = isLoadingMore,
         onLoadMore = viewModel::loadMore,
         onBackClick = onBackClick,
+        onLocationClick = onLocationClick,
         modifier = modifier,
     )
 }
@@ -65,6 +67,7 @@ private fun AllLocationsContent(
     onLoadMore: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onLocationClick: (Int) -> Unit = {},
 ) {
     val background = MaterialTheme.colorScheme.background
 
@@ -109,6 +112,7 @@ private fun AllLocationsContent(
                 isLoadingMore = isLoadingMore,
                 onLoadMore = onLoadMore,
                 modifier = contentModifier,
+                onLocationClick = onLocationClick,
             )
             is LocationUiState.Error -> ErrorContent(state.message, contentModifier)
         }
@@ -121,6 +125,7 @@ private fun AllLocationsGrid(
     isLoadingMore: Boolean,
     onLoadMore: () -> Unit,
     modifier: Modifier = Modifier,
+    onLocationClick: (Int) -> Unit = {},
 ) {
     val gridState = rememberLazyGridState()
 
@@ -140,6 +145,7 @@ private fun AllLocationsGrid(
         locations = locations,
         modifier = modifier,
         gridState = gridState,
+        onLocationClick = onLocationClick,
         footer = {
             if (isLoadingMore) {
                 item(span = { GridItemSpan(maxLineSpan) }) {
@@ -173,6 +179,7 @@ private fun AllLocationsContentPreview() {
             isLoadingMore = false,
             onLoadMore = {},
             onBackClick = {},
+            onLocationClick = {},
         )
     }
 }

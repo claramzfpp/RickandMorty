@@ -51,6 +51,7 @@ fun DiscoverScreen(
     onCharacterClick: (Int) -> Unit = {},
     onSeeAllClick: () -> Unit = {},
     onSeeAllLocationsClick: () -> Unit = {},
+    onLocationClick: (Int) -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -66,6 +67,7 @@ fun DiscoverScreen(
         onCharacterClick = onCharacterClick,
         onSeeAllClick = onSeeAllClick,
         onSeeAllLocationsClick = onSeeAllLocationsClick,
+        onLocationClick = onLocationClick,
         modifier = modifier,
     )
 }
@@ -82,6 +84,7 @@ private fun DiscoverContent(
     onCharacterClick: (Int) -> Unit = {},
     onSeeAllClick: () -> Unit = {},
     onSeeAllLocationsClick: () -> Unit = {},
+    onLocationClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -146,6 +149,7 @@ private fun DiscoverContent(
                     is LocationUiState.Loaded -> LocationCarousel(
                         locations = locationState.locations,
                         onSeeAllClick = onSeeAllLocationsClick,
+                        onLocationClick = onLocationClick,
                         modifier = Modifier.fillMaxWidth(),
                     )
 
@@ -209,6 +213,7 @@ private fun DiscoverContentPreview() {
             onSearchQueryChanged = {},
             onSeeAllClick = {},
             onSeeAllLocationsClick = {},
+            onLocationClick = {},
         )
     }
 }

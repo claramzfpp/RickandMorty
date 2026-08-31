@@ -19,4 +19,7 @@ sealed interface Screen {
 
     @Serializable
     data class CharacterDetail(val characterId: Int) : Screen
+
+    @Serializable
+    data class LocationDetail(val locationId: Int) : Screen
 }

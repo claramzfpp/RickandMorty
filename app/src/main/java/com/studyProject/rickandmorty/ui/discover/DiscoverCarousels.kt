@@ -51,6 +51,7 @@ fun LocationCarousel(
     locations: List<Location>,
     onSeeAllClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onLocationClick: (Int) -> Unit = {},
 ) {
     RMCarousel(
         title = "Locations",
@@ -66,7 +67,13 @@ fun LocationCarousel(
             modifier = Modifier.height(204.dp),
         ) {
             items(locations.take(8), key = { it.id }) { location ->
-                LocationCell(location.id, location.name, location.type, location.dimension)
+                LocationCell(
+                    location.id,
+                    location.name,
+                    location.type,
+                    location.dimension,
+                    onClick = { onLocationClick(location.id) },
+                )
             }
         }
     }

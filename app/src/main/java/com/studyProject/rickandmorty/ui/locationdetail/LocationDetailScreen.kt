@@ -1,9 +1,9 @@
-package com.studyProject.rickandmorty.ui.characterdetail
+package com.studyProject.rickandmorty.ui.locationdetail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,14 +13,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.PersonPinCircle
-import androidx.compose.material.icons.filled.Science
+import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -30,34 +26,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.SubcomposeAsyncImage
-import com.studyProject.rickandmorty.domain.model.Character
-import com.studyProject.rickandmorty.ui.common.InfoCard
+import com.studyProject.rickandmorty.domain.model.Location
 import com.studyProject.rickandmorty.ui.common.ErrorContent
+import com.studyProject.rickandmorty.ui.common.InfoCard
 import com.studyProject.rickandmorty.ui.common.LoadingContent
-import com.studyProject.rickandmorty.ui.common.StatusBadge
+import com.studyProject.rickandmorty.ui.common.locationTypeIcon
 import com.studyProject.rickandmorty.ui.theme.RMBrown
 import com.studyProject.rickandmorty.ui.theme.RMGreen
-import com.studyProject.rickandmorty.ui.theme.RMPink
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
-import androidx.compose.material.icons.filled.FavoriteBorder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CharacterDetailScreen(
+fun LocationDetailScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CharacterDetailViewModel = hiltViewModel(),
+    viewModel: LocationDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val isFavorite by viewModel.isFavorite.collectAsStateWithLifecycle()
     val background = RMBrown
 
     Scaffold(
@@ -79,20 +70,6 @@ fun CharacterDetailScreen(
                         )
                     }
                 },
-                actions = {
-                    IconButton(
-                        onClick = viewModel::toggleFavorite,
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .background(Color.Black.copy(alpha = 0.35f), CircleShape),
-                    ) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Toggle favorite",
-                            tint = if (isFavorite) RMPink else Color.White,
-                        )
-                    }
-                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     scrolledContainerColor = Color.Transparent,
@@ -107,19 +84,19 @@ fun CharacterDetailScreen(
             .background(background)
 
         when (val currentState = state) {
-            CharacterDetailUiState.Loading -> LoadingContent(contentModifier)
-            is CharacterDetailUiState.Loaded -> CharacterDetailContent(
-                character = currentState.character,
+            LocationDetailUiState.Loading -> LoadingContent(contentModifier)
+            is LocationDetailUiState.Loaded -> LocationDetailContent(
+                location = currentState.location,
                 modifier = contentModifier,
             )
-            is CharacterDetailUiState.Error -> ErrorContent(currentState.message, contentModifier)
+            is LocationDetailUiState.Error -> ErrorContent(currentState.message, contentModifier)
         }
     }
 }
 
 @Composable
-private fun CharacterDetailContent(
-    character: Character,
+private fun LocationDetailContent(
+    location: Location,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -128,8 +105,8 @@ private fun CharacterDetailContent(
         modifier = modifier
             .verticalScroll(scrollState)
     ) {
-        CharacterImage(
-            imageUrl = character.imageUrl,
+        LocationHeroIcon(
+            type = location.type,
             modifier = Modifier.fillMaxWidth(),
         )
 
@@ -137,18 +114,7 @@ private fun CharacterDetailContent(
             modifier = Modifier
                 .padding(10.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                CharacterName(name = character.name)
-
-                StatusBadge(
-                    status = character.status,
-                    height = 36,
-                )
-            }
+            LocationName(name = location.name)
 
             Row(
                 modifier = Modifier
@@ -156,27 +122,18 @@ private fun CharacterDetailContent(
                     .padding(top = 15.dp),
             ) {
                 InfoCard(
-                    icon = Icons.Filled.Science,
-                    title = "Species",
-                    subTitle = character.species,
+                    icon = locationTypeIcon(location.type),
+                    title = "Type",
+                    subTitle = location.type,
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 15.dp)
                 )
 
                 InfoCard(
-                    icon = Icons.Filled.Person,
-                    title = "Gender",
-                    subTitle = character.gender,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 15.dp),
-                )
-
-                InfoCard(
-                    icon = Icons.Filled.PersonPinCircle,
-                    title = "Origin",
-                    subTitle = character.originName,
+                    icon = Icons.Filled.Layers,
+                    title = "Dimension",
+                    subTitle = location.dimension.replaceFirstChar { it.uppercase() },
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 5.dp),
@@ -187,20 +144,25 @@ private fun CharacterDetailContent(
 }
 
 @Composable
-private fun CharacterImage(imageUrl: String, modifier: Modifier = Modifier) {
-    SubcomposeAsyncImage(
-        model = imageUrl,
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
+private fun LocationHeroIcon(type: String, modifier: Modifier = Modifier) {
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxWidth()
-            .size(width = 390.dp, height = 460.dp)
-            .background(MaterialTheme.colorScheme.background)
-    )
+            .size(width = 390.dp, height = 260.dp)
+            .background(Color.LightGray)
+    ) {
+        Icon(
+            imageVector = locationTypeIcon(type),
+            contentDescription = null,
+            tint = RMBrown,
+            modifier = Modifier.size(120.dp),
+        )
+    }
 }
 
 @Composable
-private fun CharacterName(name: String, modifier: Modifier = Modifier) {
+private fun LocationName(name: String, modifier: Modifier = Modifier) {
     Text(
         text = name,
         color = RMGreen,
@@ -211,22 +173,19 @@ private fun CharacterName(name: String, modifier: Modifier = Modifier) {
     )
 }
 
-private val previewCharacter = Character(
+private val previewLocation = Location(
     id = 1,
-    name = "Rick Sanchez",
-    status = "Alive",
-    species = "Human",
-    gender = "Male",
-    imageUrl = "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
-    originName = "Earth (C-137)",
+    name = "Earth",
+    type = "Planet",
+    dimension = "Dimension C-137",
 )
 
 @Preview(showBackground = true)
 @Composable
-private fun CharacterDetailContentPreview() {
+private fun LocationDetailContentPreview() {
     RickAndMortyTheme {
-        CharacterDetailContent(
-            character = previewCharacter,
+        LocationDetailContent(
+            location = previewLocation,
         )
     }
 }

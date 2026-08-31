@@ -26,7 +26,7 @@ import com.studyProject.rickandmorty.ui.theme.RMGreen
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 @Composable
-fun CharacterInfoCard(
+fun InfoCard(
     icon: ImageVector,
     title: String,
     subTitle: String,
@@ -74,9 +74,9 @@ fun CharacterInfoCard(
 
 @Preview(showBackground = true)
 @Composable
-private fun CharacterInfoCardPreview() {
+private fun InfoCardPreview() {
     RickAndMortyTheme {
-        CharacterInfoCard(
+        InfoCard(
             icon = Icons.Default.Favorite,
             title = "Species",
             subTitle = "Human",
