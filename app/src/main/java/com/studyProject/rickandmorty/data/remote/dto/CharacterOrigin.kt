@@ -3,9 +3,6 @@ package com.studyProject.rickandmorty.data.remote.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RMLocation(
-    val id: Int,
-    val name: String,
-    val type: String,
-    val dimension: String
+data class CharacterOrigin (
+    val name: String
 )
