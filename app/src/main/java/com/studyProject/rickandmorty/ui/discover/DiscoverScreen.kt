@@ -10,7 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -121,17 +126,20 @@ private fun DiscoverContent(
             },
             containerColor = background,
         ) { innerPadding ->
+            val scrollState = rememberScrollState()
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .background(background),
+                    .background(background)
+                    .verticalScroll(scrollState),
             ) {
                 EpisodeCarousel(modifier = Modifier.fillMaxWidth())
 
                 // switch (Swift)
                 when (state) {
-                    CharacterUiState.Loading -> LoadingContent(Modifier.weight(1f).fillMaxWidth())
+                    CharacterUiState.Loading -> LoadingContent(Modifier.fillMaxWidth().height(300.dp))
                     is CharacterUiState.Loaded -> CharacterCarousel(
                         characters = state.characters,
                         onCharacterClick = onCharacterClick,
@@ -139,7 +147,7 @@ private fun DiscoverContent(
                         modifier = Modifier.fillMaxWidth(),
                     )
 
-                    is CharacterUiState.Error -> ErrorContent(state.message, Modifier.weight(1f).fillMaxWidth())
+                    is CharacterUiState.Error -> ErrorContent(state.message, Modifier.fillMaxWidth().height(300.dp))
                 }
 
                 when (locationState) {
@@ -222,9 +230,12 @@ private fun LocationCarousel(
         modifier = modifier,
         shouldShowSeeAll = true,
     ) {
-        LazyRow(
+        LazyHorizontalGrid(
+            rows = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(18.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.height(204.dp),
         ) {
             items(locations.take(8), key = { it.id }) { location ->
                 LocationCell(location.id, location.name, location.type, location.dimension)

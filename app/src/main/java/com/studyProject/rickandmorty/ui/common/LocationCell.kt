@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import com.studyProject.rickandmorty.ui.theme.RMBrown
 import com.studyProject.rickandmorty.ui.theme.RMGreen
 import com.studyProject.rickandmorty.ui.theme.RMPink
+import com.studyProject.rickandmorty.ui.theme.RMRed
 import com.studyProject.rickandmorty.ui.theme.RMYellow
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
@@ -61,7 +62,7 @@ private fun LocationInfo(
     dimension: String
 ) {
     Column() {
-        val colorArray: Array<Color> = arrayOf(RMPink, RMGreen, RMYellow)
+        val colorArray: Array<Color> = arrayOf(RMPink, RMGreen, RMYellow, RMRed)
 
         Icon(
             imageVector = locationTypeIcon(type),
