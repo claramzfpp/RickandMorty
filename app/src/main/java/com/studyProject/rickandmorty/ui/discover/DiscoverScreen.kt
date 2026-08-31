@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studyProject.rickandmorty.domain.model.Character
+import com.studyProject.rickandmorty.domain.model.Location
 import com.studyProject.rickandmorty.ui.character.CharacterUiState
 import com.studyProject.rickandmorty.ui.character.CharacterViewModel
 import com.studyProject.rickandmorty.ui.character.SearchUiState
@@ -42,27 +44,35 @@ import com.studyProject.rickandmorty.ui.common.CharacterCellSize
 import com.studyProject.rickandmorty.ui.common.EpisodeCell
 import com.studyProject.rickandmorty.ui.common.ErrorContent
 import com.studyProject.rickandmorty.ui.common.LoadingContent
+import com.studyProject.rickandmorty.ui.common.LocationCell
 import com.studyProject.rickandmorty.ui.common.RMCarousel
+import com.studyProject.rickandmorty.ui.location.LocationUiState
+import com.studyProject.rickandmorty.ui.location.LocationViewModel
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 @Composable
 fun DiscoverScreen(
     modifier: Modifier = Modifier,
     viewModel: CharacterViewModel = hiltViewModel(),
+    locationViewModel: LocationViewModel = hiltViewModel(),
     onCharacterClick: (Int) -> Unit = {},
     onSeeAllClick: () -> Unit = {},
+    onSeeAllLocationsClick: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchState by viewModel.searchState.collectAsStateWithLifecycle()
+    val locationState by locationViewModel.state.collectAsStateWithLifecycle()
 
     DiscoverContent(
         state = state,
         searchQuery = searchQuery,
         searchState = searchState,
+        locationState = locationState,
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
         onCharacterClick = onCharacterClick,
         onSeeAllClick = onSeeAllClick,
+        onSeeAllLocationsClick = onSeeAllLocationsClick,
         modifier = modifier,
     )
 }
@@ -74,9 +84,11 @@ private fun DiscoverContent(
     state: CharacterUiState,
     searchQuery: String,
     searchState: SearchUiState,
+    locationState: LocationUiState,
     onSearchQueryChanged: (String) -> Unit,
     onCharacterClick: (Int) -> Unit = {},
     onSeeAllClick: () -> Unit = {},
+    onSeeAllLocationsClick: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -128,6 +140,23 @@ private fun DiscoverContent(
                     )
 
                     is CharacterUiState.Error -> ErrorContent(state.message, Modifier.weight(1f).fillMaxWidth())
+                }
+
+                when (locationState) {
+                    LocationUiState.Loading -> LoadingContent(
+                        Modifier.fillMaxWidth().height(160.dp)
+                    )
+
+                    is LocationUiState.Loaded -> LocationCarousel(
+                        locations = locationState.locations,
+                        onSeeAllClick = onSeeAllLocationsClick,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+
+                    is LocationUiState.Error -> ErrorContent(
+                        locationState.message,
+                        Modifier.fillMaxWidth().height(160.dp)
+                    )
                 }
             }
         }
@@ -182,6 +211,29 @@ private fun CharacterCarousel(
 }
 
 @Composable
+private fun LocationCarousel(
+    locations: List<Location>,
+    onSeeAllClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    RMCarousel(
+        title = "Locations",
+        onSeeAllClick = onSeeAllClick,
+        modifier = modifier,
+        shouldShowSeeAll = true,
+    ) {
+        LazyRow(
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            items(locations.take(8), key = { it.id }) { location ->
+                LocationCell(location.id, location.name, location.type, location.dimension)
+            }
+        }
+    }
+}
+
+@Composable
 private fun EpisodeCarousel(
     modifier: Modifier = Modifier,
 ) {
@@ -227,8 +279,16 @@ private fun DiscoverContentPreview() {
             ),
             searchQuery = "",
             searchState = SearchUiState.Idle,
+            locationState = LocationUiState.Loaded(
+                listOf(
+                    Location(id = 1, name = "Earth", type = "Planet", dimension = "Dimension C-137"),
+                    Location(id = 2, name = "Citadel of Ricks", type = "Space station", dimension = "unknown"),
+                    Location(id = 3, name = "Worldender's lair", type = "Planet", dimension = "unknown"),
+                )
+            ),
             onSearchQueryChanged = {},
             onSeeAllClick = {},
+            onSeeAllLocationsClick = {},
         )
     }
 }

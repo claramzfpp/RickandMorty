@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.studyProject.rickandmorty.ui.allcharacters.AllCharactersScreen
+import com.studyProject.rickandmorty.ui.alllocations.AllLocationsScreen
 import com.studyProject.rickandmorty.ui.characterdetail.CharacterDetailScreen
 import com.studyProject.rickandmorty.ui.discover.DiscoverScreen
 import com.studyProject.rickandmorty.ui.favorites.FavoritesScreen
@@ -49,6 +50,7 @@ fun RickAndMortyNavHost(navController: NavHostController = rememberNavController
                         navController.navigate(Screen.CharacterDetail(characterId))
                     },
                     onSeeAllClick = { navController.navigate(Screen.AllCharacters) },
+                    onSeeAllLocationsClick = { navController.navigate(Screen.AllLocations) },
                 )
             }
             composable<Screen.Favorites> {
@@ -64,6 +66,11 @@ fun RickAndMortyNavHost(navController: NavHostController = rememberNavController
                     onCharacterClick = { characterId ->
                         navController.navigate(Screen.CharacterDetail(characterId))
                     },
+                )
+            }
+            composable<Screen.AllLocations> {
+                AllLocationsScreen(
+                    onBackClick = { navController.popBackStack() },
                 )
             }
             composable<Screen.CharacterDetail> {

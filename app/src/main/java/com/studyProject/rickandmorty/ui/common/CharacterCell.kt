@@ -60,7 +60,7 @@ fun CharacterCell(
             modifier = Modifier
                 .size(imageSize, size.height)
                 .clickable(onClick = onClick)
-                .border(2.dp, Color.LightGray.copy(alpha = 0.8f), RoundedCornerShape(20.dp)),
+                .border(2.dp, Color.LightGray, RoundedCornerShape(20.dp)),
             contentAlignment = Alignment.BottomCenter,
         ) {
             CharacterImage(character.imageUrl, imageSize, size.height)

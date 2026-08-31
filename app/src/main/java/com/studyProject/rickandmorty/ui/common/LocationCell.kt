@@ -20,6 +20,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.RocketLaunch
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Tv
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.Alignment
 import com.studyProject.rickandmorty.ui.theme.RMBrown
@@ -78,7 +81,7 @@ private fun LocationInfo(
         )
 
         Text(
-            text = dimension,
+            text = dimension.replaceFirstChar { it.uppercase() },
             color = Color.DarkGray,
             fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
@@ -89,6 +92,11 @@ private fun LocationInfo(
 private fun locationTypeIcon(type: String): ImageVector {
     return when (type) {
         "Planet" -> Icons.Filled.Public
+        "Cluster" -> Icons.Filled.Star
+        "Space station" -> Icons.Default.RocketLaunch
+        "TV" -> Icons.Default.Tv
+        //adicionei alguns por diversão, não achei a lista com todas as opcões
+        // teria que verificar todos os retornos da API
         else -> Icons.Filled.Place
     }
 }

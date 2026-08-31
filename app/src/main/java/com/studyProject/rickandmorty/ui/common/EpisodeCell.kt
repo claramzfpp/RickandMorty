@@ -30,7 +30,7 @@ fun EpisodeCell(
         modifier = Modifier
             .size(130.dp, 129.dp)
             .background(
-                color = Color.LightGray.copy(alpha = 0.8f), //precisa fazer um copy para alterar o alpha
+                color = Color.LightGray, //precisa fazer um copy para alterar o alpha
                 shape = RoundedCornerShape(10.dp)
             )
     ) {
