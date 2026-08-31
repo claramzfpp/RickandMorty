@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,6 +44,8 @@ import coil3.compose.SubcomposeAsyncImage
 import com.studyProject.rickandmorty.domain.model.Character
 import com.studyProject.rickandmorty.ui.common.ErrorContent
 import com.studyProject.rickandmorty.ui.common.LoadingContent
+import com.studyProject.rickandmorty.ui.common.SeasonCell
+import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -233,5 +236,27 @@ private fun FavoriteButton(isFavorite: Boolean, onClick: () -> Unit, modifier: M
                 fontSize = 20.sp,
             )
         }
+    }
+}
+
+private val previewCharacter = Character(
+    id = 1,
+    name = "Rick Sanchez",
+    status = "Alive",
+    species = "Human",
+    gender = "Male",
+    imageUrl = "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
+    originName = "Earth (C-137)",
+)
+
+@Preview(showBackground = true)
+@Composable
+private fun CharacterDetailContentPreview() {
+    RickAndMortyTheme {
+        CharacterDetailContent(
+            character = previewCharacter,
+            isFavorite = false,
+            onToggleFavorite = {},
+        )
     }
 }
