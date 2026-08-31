@@ -47,6 +47,7 @@ import com.studyProject.rickandmorty.ui.theme.RMBrown
 import com.studyProject.rickandmorty.ui.theme.RMGreen
 import com.studyProject.rickandmorty.ui.theme.RMPink
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
+import androidx.compose.material.icons.filled.FavoriteBorder
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -86,7 +87,7 @@ fun CharacterDetailScreen(
                             .background(Color.Black.copy(alpha = 0.35f), CircleShape),
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Favorite,
+                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Default.FavoriteBorder,
                             contentDescription = "Toggle favorite",
                             tint = if (isFavorite) RMPink else Color.White,
                         )
