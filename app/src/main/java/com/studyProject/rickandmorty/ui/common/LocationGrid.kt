@@ -11,18 +11,16 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.studyProject.rickandmorty.domain.model.Character
+import com.studyProject.rickandmorty.domain.model.Location
 
 @Composable
-fun CharacterGrid(
-    characters: List<Character>,
-    onCharacterClick: (Int) -> Unit,
+fun LocationGrid(
+    locations: List<Location>,
     modifier: Modifier = Modifier,
-    size: CharacterCellSize = CharacterCellSize.Discover,
     gridState: LazyGridState = rememberLazyGridState(),
     footer: LazyGridScope.() -> Unit = {},
 ) {
-    LazyVerticalGrid( //como se fosse a uma LazyVGrid (swift)
+    LazyVerticalGrid(
         state = gridState,
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(16.dp),
@@ -30,8 +28,8 @@ fun CharacterGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier,
     ) {
-        items(characters, key = { it.id }) { character ->
-            CharacterCell(character, size = size, onClick = { onCharacterClick(character.id) })
+        items(locations, key = { it.id }) { location ->
+            LocationCell(location.id, location.name, location.type, location.dimension)
         }
 
         footer()
