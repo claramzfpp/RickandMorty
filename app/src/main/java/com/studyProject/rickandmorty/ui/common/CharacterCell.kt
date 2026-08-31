@@ -99,42 +99,6 @@ private fun CharacterLabel(name: String, status: String, width: Dp, height: Dp) 
 }
 
 @Composable
-private fun StatusBadge(status: String) {
-    val statusColor = when (status.lowercase()) {
-        "alive" -> RMGreen
-        "dead" -> RMRed
-        else -> RMYellow
-    }
-
-    Box(
-        modifier = Modifier
-            .height(24.dp)
-            .background(RMGray, RoundedCornerShape(12.dp)),
-        contentAlignment = Alignment.Center,
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 10.dp),
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(7.dp)
-                    .background(statusColor, CircleShape),
-            )
-
-            Spacer(modifier = Modifier.width(5.dp))
-
-            Text(
-                text = status,
-                color = statusColor,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
-}
-
-@Composable
 private fun CharacterImage(imageUrl: String, imageSize: Dp, cardHeight: Dp) {
     Box(
         modifier = Modifier
