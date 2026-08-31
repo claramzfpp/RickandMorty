@@ -11,6 +11,14 @@ class EpisodeRepositoryImpl @Inject constructor(
 ) : EpisodeRepository {
 
     override suspend fun getEpisodesBySeason(season: Int): List<Episode> {
+        return fetchAllEpisodes().filter { it.season == season }
+    }
+
+    override suspend fun getEpisodeCountsBySeason(): Map<Int, Int> {
+        return fetchAllEpisodes().groupingBy { it.season }.eachCount()
+    }
+
+    private suspend fun fetchAllEpisodes(): List<Episode> {
         val episodes = mutableListOf<Episode>()
 
         var page: Int? = 1
@@ -21,6 +29,6 @@ class EpisodeRepositoryImpl @Inject constructor(
             page = if (response.info.next != null) page + 1 else null
         }
 
-        return episodes.filter { it.season == season }
+        return episodes
     }
 }

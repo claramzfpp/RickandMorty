@@ -81,7 +81,9 @@ fun LocationCarousel(
 
 @Composable
 fun EpisodeCarousel(
+    seasonCounts: Map<Int, Int>,
     modifier: Modifier = Modifier,
+    onSeasonClick: (Int) -> Unit = {},
 ) {
     val seasonNumber = (1..9).toList()
 
@@ -95,9 +97,12 @@ fun EpisodeCarousel(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             items(seasonNumber, key = { it }) { season ->
+                val count = seasonCounts[season] ?: 0
                 SeasonCell(
-                    season,
-                    if (season == 1) 11 else 10
+                    seasonNumber = season,
+                    episodesNumber = count,
+                    enabled = count > 0,
+                    onClick = { onSeasonClick(season) },
                 )
             }
         }

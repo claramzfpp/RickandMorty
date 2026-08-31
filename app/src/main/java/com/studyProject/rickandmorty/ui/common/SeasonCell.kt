@@ -1,6 +1,7 @@
 package com.studyProject.rickandmorty.ui.common
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.font.FontWeight
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.studyProject.rickandmorty.ui.theme.RMGreen
@@ -24,15 +26,19 @@ import com.studyProject.rickandmorty.ui.theme.RMYellow
 @Composable
 fun SeasonCell(
     seasonNumber: Int,
-    episodesNumber: Int
+    episodesNumber: Int,
+    enabled: Boolean = true,
+    onClick: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
             .size(130.dp, 129.dp)
+            .alpha(if (enabled) 1f else 0.5f)
             .background(
                 color = Color.LightGray, //precisa fazer um copy para alterar o alpha
                 shape = RoundedCornerShape(10.dp)
             )
+            .clickable(enabled = enabled, onClick = onClick)
     ) {
 
         Column(
