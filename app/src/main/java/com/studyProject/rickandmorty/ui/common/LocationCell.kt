@@ -1,6 +1,7 @@
 package com.studyProject.rickandmorty.ui.common
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -35,7 +36,8 @@ fun LocationCell(
     id: Int,
     name: String,
     type: String,
-    dimension: String
+    dimension: String,
+    onClick: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -44,6 +46,7 @@ fun LocationCell(
                 color = Color.LightGray,
                 shape = RoundedCornerShape(10.dp)
             )
+            .clickable(onClick = onClick)
     ) {
 
         Column(
@@ -90,7 +93,7 @@ private fun LocationInfo(
     }
 }
 
-private fun locationTypeIcon(type: String): ImageVector {
+fun locationTypeIcon(type: String): ImageVector {
     return when (type) {
         "Planet" -> Icons.Filled.Public
         "Cluster" -> Icons.Filled.Star

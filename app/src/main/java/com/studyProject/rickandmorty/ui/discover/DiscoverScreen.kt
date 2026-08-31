@@ -1,19 +1,12 @@
 package com.studyProject.rickandmorty.ui.discover
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -44,13 +37,8 @@ import com.studyProject.rickandmorty.domain.model.Location
 import com.studyProject.rickandmorty.ui.character.CharacterUiState
 import com.studyProject.rickandmorty.ui.character.CharacterViewModel
 import com.studyProject.rickandmorty.ui.character.SearchUiState
-import com.studyProject.rickandmorty.ui.common.CharacterCell
-import com.studyProject.rickandmorty.ui.common.CharacterCellSize
-import com.studyProject.rickandmorty.ui.common.EpisodeCell
 import com.studyProject.rickandmorty.ui.common.ErrorContent
 import com.studyProject.rickandmorty.ui.common.LoadingContent
-import com.studyProject.rickandmorty.ui.common.LocationCell
-import com.studyProject.rickandmorty.ui.common.RMCarousel
 import com.studyProject.rickandmorty.ui.location.LocationUiState
 import com.studyProject.rickandmorty.ui.location.LocationViewModel
 import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
@@ -63,6 +51,7 @@ fun DiscoverScreen(
     onCharacterClick: (Int) -> Unit = {},
     onSeeAllClick: () -> Unit = {},
     onSeeAllLocationsClick: () -> Unit = {},
+    onLocationClick: (Int) -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -78,6 +67,7 @@ fun DiscoverScreen(
         onCharacterClick = onCharacterClick,
         onSeeAllClick = onSeeAllClick,
         onSeeAllLocationsClick = onSeeAllLocationsClick,
+        onLocationClick = onLocationClick,
         modifier = modifier,
     )
 }
@@ -94,6 +84,7 @@ private fun DiscoverContent(
     onCharacterClick: (Int) -> Unit = {},
     onSeeAllClick: () -> Unit = {},
     onSeeAllLocationsClick: () -> Unit = {},
+    onLocationClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -158,6 +149,7 @@ private fun DiscoverContent(
                     is LocationUiState.Loaded -> LocationCarousel(
                         locations = locationState.locations,
                         onSeeAllClick = onSeeAllLocationsClick,
+                        onLocationClick = onLocationClick,
                         modifier = Modifier.fillMaxWidth(),
                     )
 
@@ -191,85 +183,6 @@ private fun DiscoverTitle() {
     )
 }
 
-@Composable
-private fun CharacterCarousel(
-    characters: List<Character>,
-    onCharacterClick: (Int) -> Unit,
-    onSeeAllClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    RMCarousel(
-        title = "Characters",
-        onSeeAllClick = onSeeAllClick,
-        modifier = modifier,
-    ) {
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            items(characters.take(5), key = { it.id }) { character ->
-                CharacterCell(
-                    character,
-                    size = CharacterCellSize.Discover,
-                    onClick = { onCharacterClick(character.id) },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun LocationCarousel(
-    locations: List<Location>,
-    onSeeAllClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    RMCarousel(
-        title = "Locations",
-        onSeeAllClick = onSeeAllClick,
-        modifier = modifier,
-        shouldShowSeeAll = true,
-    ) {
-        LazyHorizontalGrid(
-            rows = GridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(18.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            modifier = Modifier.height(204.dp),
-        ) {
-            items(locations.take(8), key = { it.id }) { location ->
-                LocationCell(location.id, location.name, location.type, location.dimension)
-            }
-        }
-    }
-}
-
-@Composable
-private fun EpisodeCarousel(
-    modifier: Modifier = Modifier,
-) {
-    val seasonNumber = (1..10).toList()
-    val episodesNumber = arrayOf(10, 11, 8, 9)
-    
-    RMCarousel(
-        title = "Episodes",
-        modifier = modifier,
-        shouldShowSeeAll = false
-    ) {
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            items(seasonNumber, key = { it }) { season ->
-                EpisodeCell(
-                    season,
-                    episodesNumber.random()
-                )
-            }
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun DiscoverContentPreview() {
@@ -300,6 +213,7 @@ private fun DiscoverContentPreview() {
             onSearchQueryChanged = {},
             onSeeAllClick = {},
             onSeeAllLocationsClick = {},
+            onLocationClick = {},
         )
     }
 }

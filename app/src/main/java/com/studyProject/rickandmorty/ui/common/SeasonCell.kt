@@ -16,13 +16,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import com.studyProject.rickandmorty.ui.theme.RMGreen
 import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.unit.Dp
 import com.studyProject.rickandmorty.ui.theme.RMBrown
 import com.studyProject.rickandmorty.ui.theme.RMPink
+import com.studyProject.rickandmorty.ui.theme.RMRed
 import com.studyProject.rickandmorty.ui.theme.RMYellow
 
 @Composable
-fun EpisodeCell(
+fun SeasonCell(
     seasonNumber: Int,
     episodesNumber: Int
 ) {
@@ -38,35 +38,46 @@ fun EpisodeCell(
         Column(
             modifier = Modifier.padding(horizontal = 15.dp, vertical = 15.dp),
         ) {
-            EpisodeInfo(seasonNumber, episodesNumber)
+            SeasonInfo(seasonNumber, episodesNumber)
         }
     }
 }
 
 @Composable
-private fun EpisodeInfo(
+private fun SeasonInfo(
     seasonNumber: Int,
     episodesNumber: Int
 ) {
     Column() {
         val colorArray: Array<Color> = arrayOf(RMPink, RMGreen, RMYellow)
 
-        Box(
-            modifier = Modifier
-                .size(width = 42.dp, height = 7.dp)
-                .background(
-                    color = colorArray[(seasonNumber - 1) % colorArray.size],
-                    shape = RoundedCornerShape(12.dp)
-                )
-        )
+        if (seasonNumber > 5 ) {
+            Text(
+                text = "No more details",
+                color = RMRed,
+                fontSize = 11.sp,
+                lineHeight = 11.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(width = 42.dp, height = 7.dp)
+                    .background(
+                        color = colorArray[(seasonNumber - 1) % colorArray.size],
+                        shape = RoundedCornerShape(12.dp)
+                    )
+            )
+        }
 
         Text(
             text = seasonNumber.toString(),
             color = RMBrown,
             fontSize = 32.sp,
+            lineHeight = 32.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
-                .padding(top = 10.dp)
+                .padding(top = 5.dp)
         )
 
         Text(
@@ -89,7 +100,7 @@ private fun EpisodeInfo(
 @Composable
 private fun CharacterCellGridPreview1() {
     RickAndMortyTheme {
-        EpisodeCell(
+        SeasonCell(
             1,
             11
         )
@@ -100,7 +111,7 @@ private fun CharacterCellGridPreview1() {
 @Composable
 private fun CharacterCellGridPreview2() {
     RickAndMortyTheme {
-        EpisodeCell(
+        SeasonCell(
             2,
             8
         )
@@ -111,8 +122,8 @@ private fun CharacterCellGridPreview2() {
 @Composable
 private fun CharacterCellGridPreview3() {
     RickAndMortyTheme {
-        EpisodeCell(
-            3,
+        SeasonCell(
+            8,
             12
         )
     }

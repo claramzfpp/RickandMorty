@@ -19,6 +19,7 @@ fun LocationGrid(
     modifier: Modifier = Modifier,
     gridState: LazyGridState = rememberLazyGridState(),
     footer: LazyGridScope.() -> Unit = {},
+    onLocationClick: (Int) -> Unit = {},
 ) {
     LazyVerticalGrid(
         state = gridState,
@@ -29,7 +30,13 @@ fun LocationGrid(
         modifier = modifier,
     ) {
         items(locations, key = { it.id }) { location ->
-            LocationCell(location.id, location.name, location.type, location.dimension)
+            LocationCell(
+                location.id,
+                location.name,
+                location.type,
+                location.dimension,
+                onClick = { onLocationClick(location.id) },
+            )
         }
 
         footer()
