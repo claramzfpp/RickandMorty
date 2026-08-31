@@ -30,7 +30,6 @@ private const val BaseHeight = 24
 fun StatusBadge(
     status: String,
     backgroundColor: androidx.compose.ui.graphics.Color = RMGray,
-    width: Int = 62,
     height: Int = BaseHeight
 ) {
     val statusColor = when (status.lowercase()) {
@@ -43,7 +42,7 @@ fun StatusBadge(
 
     Box(
         modifier = Modifier
-            .size(width.dp, height.dp)
+            .height(height.dp)
             .background(backgroundColor, RoundedCornerShape((height / 2).dp)),
         contentAlignment = Alignment.Center,
     ) {

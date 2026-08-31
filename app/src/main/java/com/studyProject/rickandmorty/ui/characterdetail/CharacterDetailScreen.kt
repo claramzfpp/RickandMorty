@@ -145,7 +145,6 @@ private fun CharacterDetailContent(
 
                 StatusBadge(
                     status = character.status,
-                    width = 92,
                     height = 36,
                 )
             }
