@@ -46,7 +46,7 @@ import com.studyProject.rickandmorty.ui.character.CharacterViewModel
 import com.studyProject.rickandmorty.ui.character.SearchUiState
 import com.studyProject.rickandmorty.ui.common.CharacterCell
 import com.studyProject.rickandmorty.ui.common.CharacterCellSize
-import com.studyProject.rickandmorty.ui.common.EpisodeCell
+import com.studyProject.rickandmorty.ui.common.SeasonCell
 import com.studyProject.rickandmorty.ui.common.ErrorContent
 import com.studyProject.rickandmorty.ui.common.LoadingContent
 import com.studyProject.rickandmorty.ui.common.LocationCell
@@ -248,9 +248,8 @@ private fun LocationCarousel(
 private fun EpisodeCarousel(
     modifier: Modifier = Modifier,
 ) {
-    val seasonNumber = (1..10).toList()
-    val episodesNumber = arrayOf(10, 11, 8, 9)
-    
+    val seasonNumber = (1..9).toList()
+
     RMCarousel(
         title = "Episodes",
         modifier = modifier,
@@ -261,9 +260,9 @@ private fun EpisodeCarousel(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             items(seasonNumber, key = { it }) { season ->
-                EpisodeCell(
+                SeasonCell(
                     season,
-                    episodesNumber.random()
+                    if (season == 1) 11 else 10
                 )
             }
         }
