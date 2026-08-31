@@ -22,4 +22,7 @@ sealed interface Screen {
 
     @Serializable
     data class LocationDetail(val locationId: Int) : Screen
+
+    @Serializable
+    data class SeasonEpisodes(val seasonNumber: Int) : Screen
 }

@@ -18,6 +18,7 @@ import com.studyProject.rickandmorty.ui.characterdetail.CharacterDetailScreen
 import com.studyProject.rickandmorty.ui.discover.DiscoverScreen
 import com.studyProject.rickandmorty.ui.favorites.FavoritesScreen
 import com.studyProject.rickandmorty.ui.locationdetail.LocationDetailScreen
+import com.studyProject.rickandmorty.ui.seasonepisodes.SeasonEpisodesScreen
 
 
 // NavController == NavigationPath (swift)
@@ -55,6 +56,9 @@ fun RickAndMortyNavHost(navController: NavHostController = rememberNavController
                     onLocationClick = { locationId ->
                         navController.navigate(Screen.LocationDetail(locationId))
                     },
+                    onSeasonClick = { seasonNumber ->
+                        navController.navigate(Screen.SeasonEpisodes(seasonNumber))
+                    },
                 )
             }
             composable<Screen.Favorites> {
@@ -87,6 +91,11 @@ fun RickAndMortyNavHost(navController: NavHostController = rememberNavController
             }
             composable<Screen.LocationDetail> {
                 LocationDetailScreen(
+                    onBackClick = { navController.popBackStack() },
+                )
+            }
+            composable<Screen.SeasonEpisodes> {
+                SeasonEpisodesScreen(
                     onBackClick = { navController.popBackStack() },
                 )
             }

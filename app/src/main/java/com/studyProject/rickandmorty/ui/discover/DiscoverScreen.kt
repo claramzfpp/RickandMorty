@@ -48,26 +48,31 @@ fun DiscoverScreen(
     modifier: Modifier = Modifier,
     viewModel: CharacterViewModel = hiltViewModel(),
     locationViewModel: LocationViewModel = hiltViewModel(),
+    episodeViewModel: EpisodeViewModel = hiltViewModel(),
     onCharacterClick: (Int) -> Unit = {},
     onSeeAllClick: () -> Unit = {},
     onSeeAllLocationsClick: () -> Unit = {},
     onLocationClick: (Int) -> Unit = {},
+    onSeasonClick: (Int) -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
     val searchState by viewModel.searchState.collectAsStateWithLifecycle()
     val locationState by locationViewModel.state.collectAsStateWithLifecycle()
+    val seasonCounts by episodeViewModel.seasonCounts.collectAsStateWithLifecycle()
 
     DiscoverContent(
         state = state,
         searchQuery = searchQuery,
         searchState = searchState,
         locationState = locationState,
+        seasonCounts = seasonCounts,
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
         onCharacterClick = onCharacterClick,
         onSeeAllClick = onSeeAllClick,
         onSeeAllLocationsClick = onSeeAllLocationsClick,
         onLocationClick = onLocationClick,
+        onSeasonClick = onSeasonClick,
         modifier = modifier,
     )
 }
@@ -80,11 +85,13 @@ private fun DiscoverContent(
     searchQuery: String,
     searchState: SearchUiState,
     locationState: LocationUiState,
+    seasonCounts: Map<Int, Int> = emptyMap(),
     onSearchQueryChanged: (String) -> Unit,
     onCharacterClick: (Int) -> Unit = {},
     onSeeAllClick: () -> Unit = {},
     onSeeAllLocationsClick: () -> Unit = {},
     onLocationClick: (Int) -> Unit = {},
+    onSeasonClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -126,7 +133,11 @@ private fun DiscoverContent(
                     .background(background)
                     .verticalScroll(scrollState),
             ) {
-                EpisodeCarousel(modifier = Modifier.fillMaxWidth())
+                EpisodeCarousel(
+                    seasonCounts = seasonCounts,
+                    modifier = Modifier.fillMaxWidth(),
+                    onSeasonClick = onSeasonClick,
+                )
 
                 // switch (Swift)
                 when (state) {

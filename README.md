@@ -4,9 +4,11 @@ An Android app for browsing Rick and Morty characters, built with Kotlin and Jet
 
 ## Features
 
-- **Discover** — paginated grid of characters from the [Rick and Morty API](https://rickandmortyapi.com/), with loading states for pagination and images.
+- **Discover** — paginated grid of characters and locations from the [Rick and Morty API](https://rickandmortyapi.com/), plus a season carousel, with loading states for pagination and images.
 - **Search** — search characters by name.
 - **Character details** — full character info, with a favorite toggle.
+- **Location details** — location info (name, type, dimension).
+- **Episodes by season** — tapping a season lists its episodes (name and air date), sourced from real API data; seasons without episode data yet are dimmed and disabled.
 - **Favorites** — a dedicated tab listing favorited characters, persisted locally so they survive app restarts.
 
 ## Tech stack
@@ -29,7 +31,7 @@ domain/      Domain models and repository interfaces
 ui/          Compose screens, ViewModels, and UI state per feature
 ```
 
-Each feature under `ui/` (character list, character detail, favorites) has its own `ViewModel` and `UiState`, and depends only on the `domain` repository interfaces — never on `data` layer types directly. DI wiring for network, database, and repositories lives in `di/`.
+Each feature under `ui/` (character list, character detail, location detail, season episode list, favorites) has its own `ViewModel` and `UiState`, and depends only on the `domain` repository interfaces — never on `data` layer types directly. DI wiring for network, database, and repositories lives in `di/`.
 
 ## Getting started
 

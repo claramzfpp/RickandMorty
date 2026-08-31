@@ -1,9 +1,11 @@
 package com.studyProject.rickandmorty.di
 
 import com.studyProject.rickandmorty.data.repository.CharacterRepositoryImpl
+import com.studyProject.rickandmorty.data.repository.EpisodeRepositoryImpl
 import com.studyProject.rickandmorty.data.repository.FavoriteRepositoryImpl
 import com.studyProject.rickandmorty.data.repository.LocationRepositoryImpl
 import com.studyProject.rickandmorty.domain.repository.CharacterRepository
+import com.studyProject.rickandmorty.domain.repository.EpisodeRepository
 import com.studyProject.rickandmorty.domain.repository.FavoriteRepository
 import com.studyProject.rickandmorty.domain.repository.LocationRepository
 import dagger.Binds
@@ -35,4 +37,10 @@ abstract class RepositoryModule {
     abstract fun bindLocationRepository(
         impl: LocationRepositoryImpl
     ): LocationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindEpisodeRepository(
+        impl: EpisodeRepositoryImpl
+    ): EpisodeRepository
 }
