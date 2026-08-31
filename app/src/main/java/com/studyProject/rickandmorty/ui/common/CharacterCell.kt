@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,7 +39,7 @@ import com.studyProject.rickandmorty.ui.theme.RickAndMortyTheme
 
 enum class CharacterCellSize(val width: Dp, val height: Dp) {
     Discover(width = 140.dp, height = 212.dp),
-    Grid(width = 163.dp, height = 232.dp),
+    Grid(width = 173.dp, height = 242.dp),
 }
 
 @Composable
@@ -51,11 +53,19 @@ fun CharacterCell(
     val labelHeight = size.height - size.width
 
     Box(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier.wrapContentSize(),
         contentAlignment = Alignment.BottomCenter,
     ) {
-        CharacterImage(character.imageUrl, imageSize, size.height)
-        CharacterLabel(character.name, character.status, imageSize, labelHeight)
+        Box(
+            modifier = Modifier
+                .size(imageSize, size.height)
+                .clickable(onClick = onClick)
+                .border(2.dp, Color.LightGray.copy(alpha = 0.8f), RoundedCornerShape(20.dp)),
+            contentAlignment = Alignment.BottomCenter,
+        ) {
+            CharacterImage(character.imageUrl, imageSize, size.height)
+            CharacterLabel(character.name, character.status, imageSize, labelHeight)
+        }
     }
 }
 
@@ -64,8 +74,8 @@ private fun CharacterLabel(name: String, status: String, width: Dp, height: Dp) 
     val roundedCornerShape = RoundedCornerShape(
         topStart = 0.dp,
         topEnd = 0.dp,
-        bottomEnd = 8.dp,
-        bottomStart = 8.dp,
+        bottomEnd = 20.dp,
+        bottomStart = 20.dp,
     )
 
     Column(
@@ -74,7 +84,7 @@ private fun CharacterLabel(name: String, status: String, width: Dp, height: Dp) 
             .height(height)
             .clip(roundedCornerShape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
-            .padding(horizontal = 7.dp, vertical = 5.dp),
+           .padding(horizontal = 10.dp, vertical = 5.dp),
     ) {
         Text(
             text = name,
@@ -129,8 +139,7 @@ private fun CharacterImage(imageUrl: String, imageSize: Dp, cardHeight: Dp) {
     Box(
         modifier = Modifier
             .size(imageSize, cardHeight)
-            .clip(RoundedCornerShape(8.dp))
-            .border(3.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(8.dp)),
+            .clip(RoundedCornerShape(20.dp))
     ) {
         SubcomposeAsyncImage(
             model = imageUrl,

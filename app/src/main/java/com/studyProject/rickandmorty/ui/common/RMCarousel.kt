@@ -27,6 +27,9 @@ import com.studyProject.rickandmorty.ui.theme.RMBrown
 @Composable
 fun RMCarousel(
     title: String,
+    // isso daqui não deveria estar para todos, o cliente que não precisa disso/tem mais acesso que o necessário
+    // separar em dois components um com see all click e outro sem, seria overeng ou seguir boas práticas?
+    // TODO: pensar em como fazer esse component melhor
     onSeeAllClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     shouldShowSeeAll: Boolean = true,
