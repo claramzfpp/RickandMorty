@@ -177,7 +177,10 @@ private fun DiscoverContent(
                 searchQuery = searchQuery,
                 searchState = searchState,
                 onSearchQueryChange = onSearchQueryChanged,
-                onClose = { shouldShowSearchBar = false },
+                onClose = {
+                    shouldShowSearchBar = false
+                    onSearchQueryChanged("")
+                          },
                 onCharacterClick = onCharacterClick,
             )
         }
